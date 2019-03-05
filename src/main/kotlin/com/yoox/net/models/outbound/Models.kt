@@ -12,7 +12,8 @@ data class Item(
     val discountedPrice: Price
 )
 
-fun Item.globalAvailability(): Int = this.colors.fold(0) { acc, next -> acc + next.globalAvailability() }
+fun Item.globalAvailability(): Int =
+    this.colors.fold(0) { acc, next -> acc + next.globalAvailability() }
 
 data class Department(
     val name: String,
@@ -52,7 +53,8 @@ data class Color(
     val sizeList: List<Size>
 )
 
-fun Color.globalAvailability(): Int = this.sizeList.fold(0) { acc, next -> acc + next.availableUnits }
+fun Color.globalAvailability(): Int =
+    this.sizeList.fold(0) { acc, next -> acc + next.availableUnits }
 
 data class Size(
     val id: Int,
@@ -63,6 +65,72 @@ data class Size(
 
 data class Price(
     val amount: Float,
-    val currency: String,
     val rawPrice: String
 )
+
+data class SearchResults(
+    val items: List<SearchResultItem>,
+    val chips: List<Chip>,
+    val refinements: List<Refinement>
+)
+
+data class SearchResultItem(
+    val brand: Brand,
+    val category: Category,
+    val colors: List<SearchResultColor>,
+    val fullPrice: Price,
+    val discountedPrice: Price
+)
+
+data class SearchResultColor(
+    val id: Int,
+    val productId: String,
+    val name: String,
+    val rgb: String
+)
+
+data class Chip(
+    val label: String,
+    val attributes: Map<String, List<String>>,
+    val active: Boolean
+)
+
+interface Refinement {
+    val label: String
+    val filters: List<Filter>
+    val active: Boolean
+}
+
+data class ColorRefinement(
+    override val label: String,
+    override val filters: List<Filter>,
+    override val active: Boolean
+) : Refinement
+
+data class DesignerRefinement(
+    override val label: String,
+    override val filters: List<Filter>,
+    override val active: Boolean
+) : Refinement
+
+data class CategoryRefinement(
+    override val label: String,
+    override val filters: List<Filter>,
+    override val active: Boolean
+) : Refinement
+
+data class Filter(
+    val active: Boolean,
+    val label: String,
+    internal val value: String,
+    internal val field: String
+)
+
+fun Iterable<Refinement>.colors(): Iterable<ColorRefinement> =
+    filterIsInstance<ColorRefinement>()
+
+fun Iterable<Refinement>.designers(): Iterable<DesignerRefinement> =
+    filterIsInstance<DesignerRefinement>()
+
+fun Iterable<Refinement>.categories(): Iterable<CategoryRefinement> =
+    filterIsInstance<CategoryRefinement>()
