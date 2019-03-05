@@ -1,12 +1,12 @@
-package mapping
+package com.yoox.net.mapping
 
-import com.yoox.net.models.inbound.ColorSizeQty
 import com.yoox.net.models.outbound.*
+import com.yoox.net.models.inbound.ColorSizeQty as InboundColorSizeQty
 import com.yoox.net.models.inbound.Color as InboundColor
 import com.yoox.net.models.inbound.Size as InboundSize
 import com.yoox.net.models.inbound.Item as InboundItem
 
-internal fun InboundItem.toOutbound(): Item {
+internal fun InboundItem.toOutboundItem(): Item {
     return Item(
         Department(this.department, this.parentDepartment),
         Brand(this.brandId, this.brand.name),
@@ -34,12 +34,10 @@ internal fun InboundItem.toOutbound(): Item {
         },
         Price(
             this.commonFormattedPrices.full.valueCent / 100f,
-            this.commonFormattedPrices.full.currency,
             this.formattedPrice.fullPrice
         ),
         Price(
             this.commonFormattedPrices.discounted.valueCent / 100f,
-            this.commonFormattedPrices.discounted.currency,
             this.formattedPrice.discountedPrice
         )
     )
@@ -48,7 +46,7 @@ internal fun InboundItem.toOutbound(): Item {
 private fun availableSizeEntries(
     source: InboundColor,
     sizeList: List<InboundSize>,
-    availability: List<ColorSizeQty>
+    availability: List<InboundColorSizeQty>
 ): List<Size> =
     availability.mapNotNull { s ->
         getSize(sizeList, s, source)?.let {
@@ -63,6 +61,7 @@ private fun availableSizeEntries(
 
 private fun getSize(
     sizeList: List<InboundSize>,
-    s: ColorSizeQty,
+    s: InboundColorSizeQty,
     source: InboundColor
-): InboundSize? = sizeList.find { it.id == s.sizeId && source.colorCode == s.colorCode }
+): InboundSize? =
+    sizeList.find { it.id == s.sizeId && source.colorCode == s.colorCode }
