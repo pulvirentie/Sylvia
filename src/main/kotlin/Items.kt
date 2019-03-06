@@ -1,20 +1,26 @@
 package com.yoox.net
 
-import kotlinx.serialization.*
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.internal.StringSerializer
-import io.ktor.client.*
+import com.yoox.net.models.mapping.toOutboundItem
+import com.yoox.net.models.mapping.toOutboundSearchResults
+import com.yoox.net.models.outbound.Chip
+import com.yoox.net.models.outbound.Filter
+import com.yoox.net.models.outbound.Item
+import com.yoox.net.models.outbound.SearchResults
+import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.okhttp.OkHttpConfig
 import io.ktor.client.engine.okhttp.OkHttpEngine
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.json.serializer.KotlinxSerializer
-import io.ktor.client.request.*
+import io.ktor.client.request.get
+import io.ktor.client.request.url
 import io.ktor.http.URLBuilder
-import com.yoox.net.models.mapping.*
+import kotlinx.serialization.internal.StringSerializer
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.list
+import kotlinx.serialization.map
 import com.yoox.net.models.inbound.Item as InboundItem
 import com.yoox.net.models.inbound.SearchResults as InboundSearchResults
-import com.yoox.net.models.outbound.*
 
 const val AUTHORITY: String = "secure.api.yoox.biz"
 const val API_BASE_URL: String = "https://$AUTHORITY/YooxCore.API/1.0/"
@@ -37,35 +43,73 @@ class Items(
         }
     }
 
-    suspend fun get(id: String): Item =
-        client.get<InboundItem> {
-            url("$API_BASE_URL${DIVISION_CODE}_${country.toUpperCase()}/items/$id")
-        }.toOutboundItem()
+    fun get(id: String): Request<Item> =
+        ConcreteRequest(
+            client,
+            URLBuilder("$API_BASE_URL${DIVISION_CODE}_${country.toUpperCase()}/items/$id")
+        ) { Json.parse(InboundItem.serializer(), it) }
+            .map(InboundItem::toOutboundItem)
 
-    fun search(department: String): DepartmentSearchRequest = DepartmentSearchRequest(
-        client,
-        URLBuilder("$API_BASE_URL${DIVISION_CODE}_${country.toUpperCase()}/SearchResults?dept=$department")
-    )
+    fun search(department: String): FilterableRequest =
+        DepartmentSearchRequest(
+            client,
+            URLBuilder("$API_BASE_URL${DIVISION_CODE}_${country.toUpperCase()}/SearchResults?dept=$department"),
+            { Json.parse(InboundSearchResults.serializer(), it) },
+            InboundSearchResults::toOutboundSearchResults
+        )
 }
 
-abstract class SearchRequest(
-    protected val client: HttpClient,
-    internal val uri: URLBuilder
-) {
-    open suspend fun execute(): SearchResults =
-        client.get<InboundSearchResults> {
+interface Request<T> {
+    suspend fun execute(): T
+}
+
+interface FilterableRequest : Request<SearchResults> {
+
+    fun filterBy(vararg chips: Chip): FilterableRequest
+
+    fun filterBy(vararg filters: Filter): FilterableRequest
+}
+
+internal class ConcreteRequest<T>(
+    private val client: HttpClient,
+    private val uri: URLBuilder,
+    private val mapToInbound: (String) -> T
+) : Request<T> {
+
+    override suspend fun execute(): T =
+        mapToInbound(client.get {
             url(uri.buildString())
-        }.toOutboundSearchResults()
+        })
 }
 
-class DepartmentSearchRequest internal constructor(
-    client: HttpClient,
-    uri: URLBuilder
-) : SearchRequest(client, uri) {
-    fun filterBy(vararg chips: Chip): DepartmentSearchRequest =
+fun <T, R> Request<T>.map(f: (T) -> R): Request<R> = MapRequest(request = this, map = f)
+
+internal class MapRequest<T, R>(
+    private val request: Request<T>,
+    private val map: (T) -> R
+) : Request<R> {
+
+    override suspend fun execute(): R = map(request.execute())
+}
+
+internal class DepartmentSearchRequest internal constructor(
+    private val client: HttpClient,
+    internal val uri: URLBuilder,
+    private val mapToInbound: (String) -> InboundSearchResults,
+    private val mapToOutbound: (InboundSearchResults) -> SearchResults
+) : FilterableRequest {
+
+    override suspend fun execute(): SearchResults =
+        mapToOutbound(
+            mapToInbound(client.get {
+                url(uri.buildString())
+            })
+        )
+
+    override fun filterBy(vararg chips: Chip): DepartmentSearchRequest =
         filter(chips.flatMap { it.attributes.toList() }.toMap())
 
-    fun filterBy(vararg filters: Filter): DepartmentSearchRequest =
+    override fun filterBy(vararg filters: Filter): DepartmentSearchRequest =
         filter(filters.groupBy({ it.field }, { it.value }))
 
     private fun filter(next: Map<String, List<String>>): DepartmentSearchRequest {
@@ -84,6 +128,11 @@ class DepartmentSearchRequest internal constructor(
                 serializer,
                 union
             )
-        return DepartmentSearchRequest(client, uri)
+        return DepartmentSearchRequest(
+            client,
+            uri,
+            mapToInbound,
+            mapToOutbound
+        )
     }
 }
