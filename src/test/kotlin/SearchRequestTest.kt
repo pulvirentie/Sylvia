@@ -1,5 +1,9 @@
-import org.junit.Assert.*
-import org.junit.Test
+
+import com.yoox.net.DepartmentSearchRequest
+import com.yoox.net.FilterableRequest
+import com.yoox.net.ItemsBuilder
+import com.yoox.net.models.outbound.Chip
+import com.yoox.net.models.outbound.Filter
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.MockHttpResponse
 import io.ktor.http.HttpStatusCode
@@ -8,8 +12,8 @@ import kotlinx.serialization.internal.StringSerializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.list
 import kotlinx.serialization.map
-import com.yoox.net.ItemsBuilder
-import com.yoox.net.models.outbound.*
+import org.junit.Assert.assertEquals
+import org.junit.Test
 
 class SearchRequestTest {
     @Test
@@ -21,10 +25,10 @@ class SearchRequestTest {
             )
         }
         runBlocking {
-            val request = ItemsBuilder("uk")
+            val request: FilterableRequest = ItemsBuilder("uk")
                 .build(engine)
                 .search("men")
-            assertEquals("men", request.uri.parameters["dept"])
+            assertEquals("men", (request as DepartmentSearchRequest).uri.parameters["dept"])
             val actual = Json.parse(
                 (StringSerializer to StringSerializer.list).map,
                 request.uri.parameters["attributes"] ?: "{}"
@@ -42,7 +46,7 @@ class SearchRequestTest {
             )
         }
         runBlocking {
-            val request = ItemsBuilder("uk")
+            val request: FilterableRequest = ItemsBuilder("uk")
                 .build(engine)
                 .search("men")
                 .filterBy(
@@ -77,10 +81,11 @@ class SearchRequestTest {
                         "ctgr"
                     )
                 )
-            assertEquals("men", request.uri.parameters["dept"])
+            val castedRequest: DepartmentSearchRequest = request as DepartmentSearchRequest
+            assertEquals("men", castedRequest.uri.parameters["dept"])
             val actual = Json.parse(
                 (StringSerializer to StringSerializer.list).map,
-                request.uri.parameters["attributes"] ?: "{}"
+                castedRequest.uri.parameters["attributes"] ?: "{}"
             )
             assertEquals(2, actual.keys.size)
             assertEquals(listOf("x", "ccssr", "rt1"), actual["ctgr"])
