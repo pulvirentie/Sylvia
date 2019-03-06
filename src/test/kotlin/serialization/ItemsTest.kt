@@ -1,35 +1,38 @@
 package serialization
 
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.MockHttpResponse
-import io.ktor.http.*
+import io.ktor.http.Headers
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.io.ByteReadChannel
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import com.yoox.net.ItemsBuilder
+import com.yoox.net.Request
 import com.yoox.net.models.outbound.*
-import com.yoox.net.models.inbound.Item as InboundItem
-import com.yoox.net.models.inbound.Color as InboundColor
-import com.yoox.net.models.inbound.Size as InboundSize
-import com.yoox.net.models.inbound.Price as InboundPrice
-import com.yoox.net.models.inbound.ImageUrls as InboundImageUrls
-import com.yoox.net.models.inbound.ItemDescriptions as InboundItemDescriptions
-import com.yoox.net.models.inbound.CommonFormattedPrices as InboundCommonFormattedPrices
-import com.yoox.net.models.inbound.FormattedPrice as InboundFormattedPrice
-import com.yoox.net.models.inbound.Composition as InboundComposition
-import com.yoox.net.models.inbound.StringEnvelop as InboundStringEnvelop
-import com.yoox.net.models.inbound.ColorSizeQty as InboundColorSizeQty
-import com.yoox.net.models.inbound.CategoryAttribute as InboundCategoryAttribute
-import com.yoox.net.models.inbound.SearchResults as InboundSearchResults
-import com.yoox.net.models.inbound.Chip as InboundChip
-import com.yoox.net.models.inbound.Refinements as InboundRefinements
-import com.yoox.net.models.inbound.Filters as InboundFilters
-import com.yoox.net.models.inbound.Prices as InboundPrices
 import com.yoox.net.models.inbound.Attribute as InboundAttribute
-import com.yoox.net.models.inbound.SearchResultItem as InboundSearchResultItem
+import com.yoox.net.models.inbound.CategoryAttribute as InboundCategoryAttribute
+import com.yoox.net.models.inbound.Chip as InboundChip
+import com.yoox.net.models.inbound.Color as InboundColor
+import com.yoox.net.models.inbound.ColorSizeQty as InboundColorSizeQty
+import com.yoox.net.models.inbound.CommonFormattedPrices as InboundCommonFormattedPrices
+import com.yoox.net.models.inbound.Composition as InboundComposition
+import com.yoox.net.models.inbound.Filters as InboundFilters
+import com.yoox.net.models.inbound.FormattedPrice as InboundFormattedPrice
+import com.yoox.net.models.inbound.ImageUrls as InboundImageUrls
+import com.yoox.net.models.inbound.Item as InboundItem
+import com.yoox.net.models.inbound.ItemDescriptions as InboundItemDescriptions
+import com.yoox.net.models.inbound.Price as InboundPrice
+import com.yoox.net.models.inbound.Prices as InboundPrices
+import com.yoox.net.models.inbound.Refinements as InboundRefinements
 import com.yoox.net.models.inbound.SearchResultColor as InboundSearchResultColor
+import com.yoox.net.models.inbound.SearchResultItem as InboundSearchResultItem
+import com.yoox.net.models.inbound.SearchResults as InboundSearchResults
+import com.yoox.net.models.inbound.Size as InboundSize
+import com.yoox.net.models.inbound.StringEnvelop as InboundStringEnvelop
 
 class ItemsTest {
     @Test
@@ -157,7 +160,8 @@ class ItemsTest {
                     Headers.build { set(HttpHeaders.ContentType, "application/json") }
                 )
             }
-            val actual = ItemsBuilder("uk").build(engine).get("41868153")
+            val request: Request<Item> = ItemsBuilder("uk").build(engine).get("41868153")
+            val actual: Item = request.execute()
             assertEquals(expected, actual)
         }
     }
