@@ -1,6 +1,6 @@
-import com.yoox.net.models.outbound.*
 import org.junit.Assert.*
 import org.junit.Test
+import com.yoox.net.models.outbound.*
 
 class ItemTest {
     @Test
@@ -64,8 +64,8 @@ class ItemTest {
                     )
                 )
             ),
-            Price(1051.00f, "GBP", "1,051.00"),
-            Price(902.00f, "GBP", "902.00")
+            Price(1051.00f, "1,051.00"),
+            Price(902.00f, "902.00")
         )
         assertEquals(5, item.globalAvailability())
         assertEquals(2, item.colors[0].globalAvailability())
