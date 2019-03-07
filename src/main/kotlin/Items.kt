@@ -44,11 +44,11 @@ class Items(
     }
 
     fun get(id: String): Request<Item> =
-        ConcreteRequest(
+        KtorRequest(
             client,
-            URLBuilder("$API_BASE_URL${DIVISION_CODE}_${country.toUpperCase()}/items/$id")
-        ) { Json.parse(InboundItem.serializer(), it) }
-            .map(InboundItem::toOutboundItem)
+            URLBuilder("$API_BASE_URL${DIVISION_CODE}_${country.toUpperCase()}/items/$id"),
+            InboundItem.serializer()
+        ).map(InboundItem::toOutboundItem)
 
     fun search(department: String): FilterableRequest =
         DepartmentSearchRequest(
@@ -59,9 +59,6 @@ class Items(
         )
 }
 
-interface Request<T> {
-    suspend fun execute(): T
-}
 
 interface FilterableRequest : Request<SearchResults> {
 
@@ -70,27 +67,6 @@ interface FilterableRequest : Request<SearchResults> {
     fun filterBy(vararg filters: Filter): FilterableRequest
 }
 
-internal class ConcreteRequest<T>(
-    private val client: HttpClient,
-    private val uri: URLBuilder,
-    private val mapToInbound: (String) -> T
-) : Request<T> {
-
-    override suspend fun execute(): T =
-        mapToInbound(client.get {
-            url(uri.buildString())
-        })
-}
-
-fun <T, R> Request<T>.map(f: (T) -> R): Request<R> = MapRequest(request = this, map = f)
-
-internal class MapRequest<T, R>(
-    private val request: Request<T>,
-    private val map: (T) -> R
-) : Request<R> {
-
-    override suspend fun execute(): R = map(request.execute())
-}
 
 internal class DepartmentSearchRequest internal constructor(
     private val client: HttpClient,
