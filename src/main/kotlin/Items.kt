@@ -47,14 +47,14 @@ class Items(
         ConcreteRequest(
             client,
             URLBuilder("$API_BASE_URL${DIVISION_CODE}_${country.toUpperCase()}/items/$id")
-        ) { Json.parse(InboundItem.serializer(), it) }
+        ) { Json.nonstrict.parse(InboundItem.serializer(), it) }
             .map(InboundItem::toOutboundItem)
 
     fun search(department: String): FilterableRequest =
         DepartmentSearchRequest(
             client,
             URLBuilder("$API_BASE_URL${DIVISION_CODE}_${country.toUpperCase()}/SearchResults?dept=$department"),
-            { Json.parse(InboundSearchResults.serializer(), it) }
+            { Json.nonstrict.parse(InboundSearchResults.serializer(), it) }
         )
 }
 
@@ -115,7 +115,7 @@ internal class DepartmentSearchRequest internal constructor(
         val serializer =
             (StringSerializer to StringSerializer.list).map
         val previous =
-            Json.parse(
+            Json.nonstrict.parse(
                 serializer,
                 uri.parameters["attributes"] ?: "{}"
             )
