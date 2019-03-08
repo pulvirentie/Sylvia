@@ -12,8 +12,6 @@ import io.ktor.client.engine.okhttp.OkHttpConfig
 import io.ktor.client.engine.okhttp.OkHttpEngine
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.json.serializer.KotlinxSerializer
-import io.ktor.client.request.get
-import io.ktor.client.request.url
 import io.ktor.http.URLBuilder
 import kotlinx.serialization.internal.StringSerializer
 import kotlinx.serialization.json.Json
@@ -44,21 +42,18 @@ class Items(
     }
 
     fun get(id: String): Request<Item> =
-        ConcreteRequest(
+        KtorRequest(
             client,
-            URLBuilder("$API_BASE_URL${DIVISION_CODE}_${country.toUpperCase()}/items/$id")
-        ) { Json.nonstrict.parse(InboundItem.serializer(), it) }
+            URLBuilder("$API_BASE_URL${DIVISION_CODE}_${country.toUpperCase()}/items/$id"),
+            InboundItem.serializer()
+        )
             .map(InboundItem::toOutboundItem)
 
     fun search(department: String): FilterableRequest =
         DepartmentSearchRequest(
             client,
             URLBuilder("$API_BASE_URL${DIVISION_CODE}_${country.toUpperCase()}/SearchResults?dept=$department")
-        ) { Json.nonstrict.parse(InboundSearchResults.serializer(), it) }
-}
-
-interface Request<T> {
-    suspend fun execute(): T
+        )
 }
 
 interface FilterableRequest : Request<SearchResults> {
@@ -67,37 +62,16 @@ interface FilterableRequest : Request<SearchResults> {
     fun filterBy(vararg filters: Filter): FilterableRequest
 }
 
-internal class ConcreteRequest<T>(
-    private val client: HttpClient,
-    private val uri: URLBuilder,
-    private val mapToInbound: (String) -> T
-) : Request<T> {
-    override suspend fun execute(): T =
-        mapToInbound(client.get {
-            url(uri.buildString())
-        })
-}
-
-fun <T, R> Request<T>.map(f: (T) -> R): Request<R> = MapRequest(request = this, map = f)
-
-internal class MapRequest<T, R>(
-    private val request: Request<T>,
-    private val map: (T) -> R
-) : Request<R> {
-
-    override suspend fun execute(): R = map(request.execute())
-}
 
 internal class DepartmentSearchRequest internal constructor(
     private val client: HttpClient,
-    internal val uri: URLBuilder,
-    private val mapToInbound: (String) -> InboundSearchResults
+    internal val uri: URLBuilder
 ) : FilterableRequest {
     override suspend fun execute(): SearchResults =
-        ConcreteRequest(
+        KtorRequest(
             client,
             uri,
-            mapToInbound
+            InboundSearchResults.serializer()
         ).map(InboundSearchResults::toOutboundSearchResults)
             .execute()
 
@@ -115,7 +89,7 @@ internal class DepartmentSearchRequest internal constructor(
         val serializer =
             (StringSerializer to StringSerializer.list).map
         val previous =
-            Json.nonstrict.parse(
+            Json.parse(
                 serializer,
                 uri.parameters["attributes"] ?: "{}"
             )
@@ -130,8 +104,7 @@ internal class DepartmentSearchRequest internal constructor(
             )
         return DepartmentSearchRequest(
             client,
-            uri,
-            mapToInbound
+            uri
         )
     }
 }
