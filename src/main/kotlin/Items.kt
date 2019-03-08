@@ -12,8 +12,6 @@ import io.ktor.client.engine.okhttp.OkHttpConfig
 import io.ktor.client.engine.okhttp.OkHttpEngine
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.json.serializer.KotlinxSerializer
-import io.ktor.client.request.get
-import io.ktor.client.request.url
 import io.ktor.http.URLBuilder
 import kotlinx.serialization.internal.StringSerializer
 import kotlinx.serialization.json.Json
@@ -48,17 +46,15 @@ class Items(
             client,
             URLBuilder("$API_BASE_URL${DIVISION_CODE}_${country.toUpperCase()}/items/$id"),
             InboundItem.serializer()
-        ).map(InboundItem::toOutboundItem)
+        )
+            .map(InboundItem::toOutboundItem)
 
     fun search(department: String): FilterableRequest =
         DepartmentSearchRequest(
             client,
-            URLBuilder("$API_BASE_URL${DIVISION_CODE}_${country.toUpperCase()}/SearchResults?dept=$department"),
-            { Json.parse(InboundSearchResults.serializer(), it) },
-            InboundSearchResults::toOutboundSearchResults
+            URLBuilder("$API_BASE_URL${DIVISION_CODE}_${country.toUpperCase()}/SearchResults?dept=$department")
         )
 }
-
 
 interface FilterableRequest : Request<SearchResults> {
 
@@ -67,20 +63,18 @@ interface FilterableRequest : Request<SearchResults> {
     fun filterBy(vararg filters: Filter): FilterableRequest
 }
 
-
 internal class DepartmentSearchRequest internal constructor(
     private val client: HttpClient,
-    internal val uri: URLBuilder,
-    private val mapToInbound: (String) -> InboundSearchResults,
-    private val mapToOutbound: (InboundSearchResults) -> SearchResults
+    internal val uri: URLBuilder
 ) : FilterableRequest {
 
     override suspend fun execute(): SearchResults =
-        mapToOutbound(
-            mapToInbound(client.get {
-                url(uri.buildString())
-            })
-        )
+        KtorRequest(
+            client,
+            uri,
+            InboundSearchResults.serializer()
+        ).map(InboundSearchResults::toOutboundSearchResults)
+            .execute()
 
     override fun filterBy(vararg chips: Chip): DepartmentSearchRequest =
         filter(chips.flatMap { it.attributes.toList() }.toMap())
@@ -106,9 +100,7 @@ internal class DepartmentSearchRequest internal constructor(
             )
         return DepartmentSearchRequest(
             client,
-            uri,
-            mapToInbound,
-            mapToOutbound
+            uri
         )
     }
 }
