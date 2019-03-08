@@ -24,7 +24,7 @@ internal class KtorRequest<T>(
         val stringResult = client.get<String> {
             url(uri.buildString())
         }
-        return Json.parse(serializer, stringResult)
+        return Json.nonstrict.parse(serializer, stringResult)
     }
 
 }
