@@ -1,4 +1,4 @@
-package com.yoox.net.models.mapping
+package com.yoox.net.mapping
 
 import com.yoox.net.models.outbound.*
 import com.yoox.net.models.inbound.Attribute as InboundAttribute
@@ -52,9 +52,9 @@ private fun <T : Refinement> toCanonicalRefinement(attribute: InboundAttribute):
 
 internal fun buildRefinement(attribute: InboundAttribute): Refinement? {
     return when (attribute.type) {
-        "Color" -> toCanonicalRefinement<ColorRefinement>(attribute)(::ColorRefinement)
-        "dsgnrs" -> toCanonicalRefinement<DesignerRefinement>(attribute)(::DesignerRefinement)
-        "ctgr" -> toCanonicalRefinement<CategoryRefinement>(attribute)(::CategoryRefinement)
+        "Color" -> toCanonicalRefinement<Refinement.Color>(attribute)() { a, b, c -> Refinement.Color(a, b, c) }
+        "dsgnrs" -> toCanonicalRefinement<Refinement.Designer>(attribute)() { a, b, c -> Refinement.Designer(a, b, c) }
+        "ctgr" -> toCanonicalRefinement<Refinement.Category>(attribute)() { a, b, c -> Refinement.Category(a, b, c) }
         else -> null
     }
 }

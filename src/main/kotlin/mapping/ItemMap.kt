@@ -1,10 +1,10 @@
-package com.yoox.net.models.mapping
+package com.yoox.net.mapping
 
 import com.yoox.net.models.outbound.*
-import com.yoox.net.models.inbound.ColorSizeQty as InboundColorSizeQty
 import com.yoox.net.models.inbound.Color as InboundColor
-import com.yoox.net.models.inbound.Size as InboundSize
+import com.yoox.net.models.inbound.ColorSizeQty as InboundColorSizeQty
 import com.yoox.net.models.inbound.Item as InboundItem
+import com.yoox.net.models.inbound.Size as InboundSize
 
 internal fun InboundItem.toOutboundItem(): Item {
     return Item(

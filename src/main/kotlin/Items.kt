@@ -1,7 +1,7 @@
 package com.yoox.net
 
-import com.yoox.net.models.mapping.toOutboundItem
-import com.yoox.net.models.mapping.toOutboundSearchResults
+import com.yoox.net.mapping.toOutboundItem
+import com.yoox.net.mapping.toOutboundSearchResults
 import com.yoox.net.models.outbound.Chip
 import com.yoox.net.models.outbound.Filter
 import com.yoox.net.models.outbound.Item
@@ -57,17 +57,16 @@ class Items(
 }
 
 interface FilterableRequest : Request<SearchResults> {
-
     fun filterBy(vararg chips: Chip): FilterableRequest
 
     fun filterBy(vararg filters: Filter): FilterableRequest
 }
 
+
 internal class DepartmentSearchRequest internal constructor(
     private val client: HttpClient,
     internal val uri: URLBuilder
 ) : FilterableRequest {
-
     override suspend fun execute(): SearchResults =
         KtorRequest(
             client,
@@ -77,10 +76,14 @@ internal class DepartmentSearchRequest internal constructor(
             .execute()
 
     override fun filterBy(vararg chips: Chip): DepartmentSearchRequest =
-        filter(chips.flatMap { it.attributes.toList() }.toMap())
+        filter(flattenAttributes(chips.flatMap { it.attributes.toList() }))
 
     override fun filterBy(vararg filters: Filter): DepartmentSearchRequest =
         filter(filters.groupBy({ it.field }, { it.value }))
+
+    private fun flattenAttributes(source: List<Pair<String, List<String>>>): Map<String, List<String>> =
+        source.groupBy({ it.first }, { it.second })
+            .mapValues { it.value.flatten() }
 
     private fun filter(next: Map<String, List<String>>): DepartmentSearchRequest {
         val serializer =
@@ -91,8 +94,9 @@ internal class DepartmentSearchRequest internal constructor(
                 uri.parameters["attributes"] ?: "{}"
             )
         val union: Map<String, List<String>> =
-            (previous.asSequence() + next.asSequence())
-                .associateBy({ it.key }, { it.value.distinct() })
+            flattenAttributes(previous.toList() + next.toList())
+                .toList()
+                .associateBy({ it.first }, { it.second.distinct() })
         uri.parameters["attributes"] =
             Json.stringify(
                 serializer,

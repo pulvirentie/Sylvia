@@ -95,29 +95,29 @@ data class Chip(
     val active: Boolean
 )
 
-interface Refinement {
-    val label: String
-    val filters: List<Filter>
-    val active: Boolean
+sealed class Refinement {
+    abstract val label: String
+    abstract val filters: List<Filter>
+    abstract val active: Boolean
+
+    data class Color(
+        override val label: String,
+        override val filters: List<Filter>,
+        override val active: Boolean
+    ) : Refinement()
+
+    data class Designer(
+        override val label: String,
+        override val filters: List<Filter>,
+        override val active: Boolean
+    ) : Refinement()
+
+    data class Category(
+        override val label: String,
+        override val filters: List<Filter>,
+        override val active: Boolean
+    ) : Refinement()
 }
-
-data class ColorRefinement(
-    override val label: String,
-    override val filters: List<Filter>,
-    override val active: Boolean
-) : Refinement
-
-data class DesignerRefinement(
-    override val label: String,
-    override val filters: List<Filter>,
-    override val active: Boolean
-) : Refinement
-
-data class CategoryRefinement(
-    override val label: String,
-    override val filters: List<Filter>,
-    override val active: Boolean
-) : Refinement
 
 data class Filter(
     val active: Boolean,
@@ -126,11 +126,11 @@ data class Filter(
     internal val field: String
 )
 
-fun Iterable<Refinement>.colors(): Iterable<ColorRefinement> =
-    filterIsInstance<ColorRefinement>()
+fun Iterable<Refinement>.colors(): Iterable<Refinement.Color> =
+    filterIsInstance<Refinement.Color>()
 
-fun Iterable<Refinement>.designers(): Iterable<DesignerRefinement> =
-    filterIsInstance<DesignerRefinement>()
+fun Iterable<Refinement>.designers(): Iterable<Refinement.Designer> =
+    filterIsInstance<Refinement.Designer>()
 
-fun Iterable<Refinement>.categories(): Iterable<CategoryRefinement> =
-    filterIsInstance<CategoryRefinement>()
+fun Iterable<Refinement>.categories(): Iterable<Refinement.Category> =
+    filterIsInstance<Refinement.Category>()
