@@ -1,4 +1,4 @@
-package com.yoox.net.models.mapping
+package com.yoox.net.mapping
 
 import com.yoox.net.models.outbound.*
 import com.yoox.net.models.inbound.ColorSizeQty as InboundColorSizeQty

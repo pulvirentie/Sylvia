@@ -9,17 +9,17 @@ class SearchResultsTest {
             listOf(),
             listOf(),
             listOf(
-                CategoryRefinement(
+                Refinement.Category(
                     "Categories",
                     listOf(),
                     true
                 ),
-                ColorRefinement(
+                Refinement.Color(
                     "Colors",
                     listOf(),
                     true
                 ),
-                DesignerRefinement(
+                Refinement.Designer(
                     "Designers",
                     listOf(),
                     true

@@ -1,23 +1,7 @@
 package serialization
 
-import com.yoox.net.ItemsBuilder
-import com.yoox.net.Request
-import com.yoox.net.models.outbound.Brand
-import com.yoox.net.models.outbound.Category
-import com.yoox.net.models.outbound.CategoryName
-import com.yoox.net.models.outbound.CategoryRefinement
-import com.yoox.net.models.outbound.Chip
-import com.yoox.net.models.outbound.Color
-import com.yoox.net.models.outbound.Department
-import com.yoox.net.models.outbound.Filter
-import com.yoox.net.models.outbound.Image
-import com.yoox.net.models.outbound.Item
-import com.yoox.net.models.outbound.Price
-import com.yoox.net.models.outbound.SaleLine
-import com.yoox.net.models.outbound.SearchResultColor
-import com.yoox.net.models.outbound.SearchResultItem
-import com.yoox.net.models.outbound.SearchResults
-import com.yoox.net.models.outbound.Size
+import org.junit.Assert.assertEquals
+import org.junit.Test
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.MockHttpResponse
 import io.ktor.http.Headers
@@ -26,8 +10,9 @@ import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.io.ByteReadChannel
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import com.yoox.net.ItemsBuilder
+import com.yoox.net.Request
+import com.yoox.net.models.outbound.*
 import com.yoox.net.models.inbound.Attribute as InboundAttribute
 import com.yoox.net.models.inbound.CategoryAttribute as InboundCategoryAttribute
 import com.yoox.net.models.inbound.Chip as InboundChip
@@ -305,7 +290,7 @@ class ItemsTest {
                     )
                 ),
                 listOf(
-                    CategoryRefinement(
+                    Refinement.Category(
                         "Categories",
                         listOf(
                             Filter(

@@ -1,4 +1,3 @@
-
 import com.yoox.net.DepartmentSearchRequest
 import com.yoox.net.FilterableRequest
 import com.yoox.net.ItemsBuilder
@@ -51,13 +50,18 @@ class SearchRequestTest {
                 .search("men")
                 .filterBy(
                     Chip(
-                        "Suits and Blazers",
-                        hashMapOf("ctgr" to listOf("x")),
+                        "",
+                        hashMapOf("ctgr" to listOf("cntr2")),
                         true
                     ),
                     Chip(
-                        "Grey",
-                        hashMapOf("clr" to listOf("25")),
+                        "",
+                        hashMapOf("clr" to listOf("25", "21", "22")),
+                        false
+                    ),
+                    Chip(
+                        "",
+                        hashMapOf("ctgr" to listOf("brs", "lttbgn1")),
                         false
                     )
                 )
@@ -65,7 +69,7 @@ class SearchRequestTest {
                     Filter(
                         false,
                         "Suits and Blazers",
-                        "x",
+                        "lttbgn1",
                         "ctgr"
                     ),
                     Filter(
@@ -79,17 +83,29 @@ class SearchRequestTest {
                         "Art",
                         "rt1",
                         "ctgr"
+                    ),
+                    Filter(
+                        true,
+                        "Black",
+                        "21",
+                        "clr"
+                    ),
+                    Filter(
+                        true,
+                        "Green",
+                        "93",
+                        "clr"
                     )
                 )
-            val castedRequest: DepartmentSearchRequest = request as DepartmentSearchRequest
-            assertEquals("men", castedRequest.uri.parameters["dept"])
+            val byDepartmentRequest: DepartmentSearchRequest = request as DepartmentSearchRequest
+            assertEquals("men", byDepartmentRequest.uri.parameters["dept"])
             val actual = Json.parse(
                 (StringSerializer to StringSerializer.list).map,
-                castedRequest.uri.parameters["attributes"] ?: "{}"
+                byDepartmentRequest.uri.parameters["attributes"] ?: "{}"
             )
             assertEquals(2, actual.keys.size)
-            assertEquals(listOf("x", "ccssr", "rt1"), actual["ctgr"])
-            assertEquals(listOf("25"), actual["clr"])
+            assertEquals(listOf("cntr2", "brs", "lttbgn1", "ccssr", "rt1"), actual["ctgr"])
+            assertEquals(listOf("25", "21", "22", "93"), actual["clr"])
         }
     }
 }
