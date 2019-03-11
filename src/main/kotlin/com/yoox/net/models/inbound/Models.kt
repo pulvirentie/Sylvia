@@ -90,9 +90,16 @@ internal data class ColorSizeQty(
 
 @Serializable
 internal data class CategoryAttribute(
-    @SerialName("Code") val code: String,
+    @SerialName("Url") val attributeUrl: AttributeUrl,
     @SerialName("SingleDescr") val singleDescr: String,
     @SerialName("PluralDescr") val pluralDescr: String
+)
+
+@Serializable
+internal data class AttributeUrl(
+    @SerialName("Path") val path: String,
+    @SerialName("SeoFriendlyPathWithQueryString") val pathWithQuery: String,
+    @SerialName("SeoFriendlyPathWithHash") val pathWithHash: String
 )
 
 @Serializable

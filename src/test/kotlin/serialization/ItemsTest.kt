@@ -15,6 +15,7 @@ import com.yoox.net.Request
 import com.yoox.net.models.outbound.*
 import com.yoox.net.models.inbound.Attribute as InboundAttribute
 import com.yoox.net.models.inbound.CategoryAttribute as InboundCategoryAttribute
+import com.yoox.net.models.inbound.AttributeUrl as InboundAttributeUrl
 import com.yoox.net.models.inbound.Chip as InboundChip
 import com.yoox.net.models.inbound.Color as InboundColor
 import com.yoox.net.models.inbound.ColorSizeQty as InboundColorSizeQty
@@ -98,12 +99,20 @@ class ItemsTest {
                 "PLV_JUST IN",
                 "2268",
                 InboundCategoryAttribute(
-                    "cpptt",
+                    InboundAttributeUrl(
+                        "/it/donna/shoponline",
+                        "/it/donna/shoponline",
+                        "/it/donna/shoponline"
+                    ),
                     "Coat",
                     "Coats"
                 ),
                 InboundCategoryAttribute(
-                    "cpspll",
+                    InboundAttributeUrl(
+                        "/it/donna/shoponline",
+                        "/it/donna/shoponline",
+                        "/it/donna/shoponline"
+                    ),
                     "Coats and Jackets",
                     "Coats and Jackets"
                 ),
