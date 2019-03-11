@@ -1,0 +1,39 @@
+plugins {
+    id 'java'
+    id 'org.jetbrains.kotlin.jvm'
+}
+
+group 'com.yoox'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+
+    implementation "io.ktor:ktor-client:$ktor_version"
+    implementation "io.ktor:ktor-client-json:$ktor_version"
+
+    implementation "io.ktor:ktor-client-json-jvm:$ktor_version"
+    implementation "io.ktor:ktor-client-okhttp:$ktor_version"
+    implementation "io.ktor:ktor-client-core-jvm:$ktor_version"
+
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$serialization_runtime_version"
+
+    testImplementation("io.ktor:ktor-client-mock:$ktor_version",
+            "io.ktor:ktor-client-mock-jvm:$ktor_version",
+            "io.ktor:ktor-client-mock-js:$ktor_version",
+            "io.ktor:ktor-client-mock-native:$ktor_version")
+    testImplementation group: 'junit', name: 'junit', version: "$junit_version"
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+apply plugin: 'kotlin'
+apply plugin: 'kotlinx-serialization'
