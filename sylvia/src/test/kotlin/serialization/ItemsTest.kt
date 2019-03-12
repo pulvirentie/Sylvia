@@ -1,7 +1,24 @@
 package serialization
 
-import org.junit.Assert.assertEquals
+import org.junit.Assert.*
 import org.junit.Test
+import com.yoox.net.ItemsBuilder
+import com.yoox.net.Request
+import com.yoox.net.models.outbound.Brand
+import com.yoox.net.models.outbound.Category
+import com.yoox.net.models.outbound.CategoryName
+import com.yoox.net.models.outbound.Color
+import com.yoox.net.models.outbound.Department
+import com.yoox.net.models.outbound.Filter
+import com.yoox.net.models.outbound.Image
+import com.yoox.net.models.outbound.Item
+import com.yoox.net.models.outbound.Price
+import com.yoox.net.models.outbound.Refinement
+import com.yoox.net.models.outbound.SaleLine
+import com.yoox.net.models.outbound.SearchResultColor
+import com.yoox.net.models.outbound.SearchResultItem
+import com.yoox.net.models.outbound.SearchResults
+import com.yoox.net.models.outbound.Size
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.MockHttpResponse
 import io.ktor.http.Headers
@@ -10,13 +27,11 @@ import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.io.ByteReadChannel
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
-import com.yoox.net.ItemsBuilder
-import com.yoox.net.Request
 import com.yoox.net.models.inbound.Analytics
 import com.yoox.net.models.outbound.*
 import com.yoox.net.models.inbound.Attribute as InboundAttribute
-import com.yoox.net.models.inbound.CategoryAttribute as InboundCategoryAttribute
 import com.yoox.net.models.inbound.AttributeUrl as InboundAttributeUrl
+import com.yoox.net.models.inbound.CategoryAttribute as InboundCategoryAttribute
 import com.yoox.net.models.inbound.Color as InboundColor
 import com.yoox.net.models.inbound.ColorSizeQty as InboundColorSizeQty
 import com.yoox.net.models.inbound.CommonFormattedPrices as InboundCommonFormattedPrices
@@ -36,6 +51,7 @@ import com.yoox.net.models.inbound.Size as InboundSize
 import com.yoox.net.models.inbound.StringEnvelop as InboundStringEnvelop
 
 class ItemsTest {
+
     @Test
     fun jsonToItem() {
         runBlocking {

@@ -24,7 +24,8 @@ dependencies {
             "io.ktor:ktor-client-mock-jvm:$ktor_version",
             "io.ktor:ktor-client-mock-js:$ktor_version",
             "io.ktor:ktor-client-mock-native:$ktor_version")
-    testImplementation group: 'junit', name: 'junit', version: "$junit_version"
+
+    testImplementation "junit:junit:$junit_version"
 }
 
 compileKotlin {
