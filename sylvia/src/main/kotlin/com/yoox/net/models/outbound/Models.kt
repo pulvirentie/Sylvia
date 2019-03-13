@@ -4,7 +4,6 @@ data class Item(
     val department: Department,
     val brand: Brand,
     val category: Category,
-    val images: List<Image>,
     val composition: String,
     val saleLine: SaleLine,
     val colors: List<Color>,
@@ -50,7 +49,8 @@ data class Color(
     val productId: String,
     val name: String,
     val rgb: String,
-    val sizeList: List<Size>
+    val sizeList: List<Size>,
+    val images: List<Image>
 )
 
 fun Color.globalAvailability(): Int =
@@ -86,7 +86,8 @@ data class SearchResultColor(
     val id: Int,
     val productId: String,
     val name: String,
-    val rgb: String
+    val rgb: String,
+    val images: List<String>
 )
 
 data class Chip(

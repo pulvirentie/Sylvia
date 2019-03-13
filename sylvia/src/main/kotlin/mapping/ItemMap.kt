@@ -20,7 +20,6 @@ internal fun InboundItem.toOutboundItem(): Item {
                 this.macroCategoryAttribute.pluralDescr
             )
         ),
-        this.imageUrls.normal.mapIndexed { index, it -> Image(it, this.imageUrls.zoom[index]) },
         this.composition.value,
         SaleLine(this.salesLineId, this.saleLine),
         this.colors.map {
@@ -29,7 +28,11 @@ internal fun InboundItem.toOutboundItem(): Item {
                 it.code10,
                 it.name,
                 it.rgb,
-                availableSizeEntries(it, this.sizes, this.colorSizeQty)
+                availableSizeEntries(it, this.sizes, this.colorSizeQty),
+                this.imageUrls.normal.zip(this.imageUrls.zoom)
+                    .map { zipped ->
+                        Image(it.getImageUrl(zipped.first), it.getImageUrl(zipped.second))
+                    }
             )
         },
         Price(
@@ -65,3 +68,5 @@ private fun getSize(
     source: InboundColor
 ): InboundSize? =
     sizeList.find { it.id == s.sizeId && source.colorCode == s.colorCode }
+
+private fun InboundColor.getImageUrl(url: String): String = url.replace("-COLOR-", this.colorCode)

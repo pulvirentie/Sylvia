@@ -14,12 +14,6 @@ class ItemTest {
                 CategoryName("Coat", "Coats"),
                 CategoryName("Coats and Jackets", "Coats and Jackets")
             ),
-            listOf(
-                Image(
-                    "http://exampl.ecom/image.png",
-                    "http://exampl.ecom/image_zoom.png"
-                )
-            ),
             "100% Virgin Wool",
             SaleLine("2268", "PLV_JUST IN"),
             listOf(
@@ -41,6 +35,12 @@ class ItemTest {
                             "UK",
                             1
                         )
+                    ),
+                    listOf(
+                        Image(
+                            "http://exampl.ecom/image.png",
+                            "http://exampl.ecom/image_zoom.png"
+                        )
                     )
                 ),
                 Color(
@@ -60,6 +60,12 @@ class ItemTest {
                             "10",
                             "UK",
                             2
+                        )
+                    ),
+                    listOf(
+                        Image(
+                            "http://exampl.ecom/image.png",
+                            "http://exampl.ecom/image_zoom.png"
                         )
                     )
                 )

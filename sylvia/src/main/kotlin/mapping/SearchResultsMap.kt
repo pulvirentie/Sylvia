@@ -4,6 +4,10 @@ import com.yoox.net.models.outbound.*
 import com.yoox.net.models.inbound.Attribute as InboundAttribute
 import com.yoox.net.models.inbound.SearchResults as InboundSearchResults
 
+const val IMAGES_BASE_URL: String = "https://cdn.yoox.biz"
+const val IMAGE_EXTENSION: String = ".jpg"
+val IMAGES_FORMAT_SET: List<String> = listOf("_9_f", "_10_f", "_11_f", "_13_f")
+
 internal fun InboundSearchResults.toOutboundSearchResults(): SearchResults {
     return SearchResults(this.items.map {
         SearchResultItem(
@@ -17,7 +21,11 @@ internal fun InboundSearchResults.toOutboundSearchResults(): SearchResults {
                     source.colorId,
                     source.cod10,
                     source.description,
-                    source.rgb
+                    source.rgb,
+                    IMAGES_FORMAT_SET
+                        .map {
+                            format -> "$IMAGES_BASE_URL/${source.cod10.substring(0, 2)}/${source.cod10}$format$IMAGE_EXTENSION"
+                        }
                 )
             },
             Price(it.fullPrice.toFloat(), it.formattedFullPrice),

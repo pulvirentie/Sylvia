@@ -41,8 +41,8 @@ class ItemsTest {
         runBlocking {
             val inboundItem = InboundItem(
                 InboundImageUrls(
-                    listOf("http://exampl.ecom/image.png"),
-                    listOf("http://exampl.ecom/image_zoom.png")
+                    listOf("http://exampl.ecom/-COLOR-/image.png"),
+                    listOf("http://exampl.ecom/-COLOR-/image_zoom.png")
                 ),
                 InboundItemDescriptions(listOf()),
                 InboundCommonFormattedPrices(
@@ -128,12 +128,6 @@ class ItemsTest {
                     CategoryName("Coat", "Coats"),
                     CategoryName("Coats and Jackets", "Coats and Jackets")
                 ),
-                listOf(
-                    Image(
-                        "http://exampl.ecom/image.png",
-                        "http://exampl.ecom/image_zoom.png"
-                    )
-                ),
                 "100% Virgin Wool",
                 SaleLine("2268", "PLV_JUST IN"),
                 listOf(
@@ -154,6 +148,12 @@ class ItemsTest {
                                 "10",
                                 "UK",
                                 1
+                            )
+                        ),
+                        listOf(
+                            Image(
+                                "http://exampl.ecom/MO/image.png",
+                                "http://exampl.ecom/MO/image_zoom.png"
                             )
                         )
                     )
@@ -273,7 +273,13 @@ class ItemsTest {
                                 18,
                                 "49441077GJ",
                                 "Blue",
-                                "214377"
+                                "214377",
+                                listOf(
+                                    "https://cdn.yoox.biz/49/49441077GJ_9_f.jpg",
+                                    "https://cdn.yoox.biz/49/49441077GJ_10_f.jpg",
+                                    "https://cdn.yoox.biz/49/49441077GJ_11_f.jpg",
+                                    "https://cdn.yoox.biz/49/49441077GJ_13_f.jpg"
+                                )
                             )
                         ),
                         Price(
