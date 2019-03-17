@@ -13,6 +13,7 @@ import io.ktor.client.engine.okhttp.OkHttpEngine
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.json.serializer.KotlinxSerializer
 import io.ktor.http.URLBuilder
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.internal.StringSerializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.list
@@ -62,6 +63,12 @@ interface FilterableRequest : Request<SearchResults> {
     fun filterBy(vararg filters: Filter): FilterableRequest
 }
 
+internal val attributesSerializer =
+    (StringSerializer to StringSerializer.list).map
+internal val chipsSerializer =
+    (StringSerializer to attributesSerializer).map
+
+typealias ListOfAttributes = Map<String, List<String>>
 
 internal class DepartmentSearchRequest internal constructor(
     private val client: HttpClient,
@@ -76,35 +83,45 @@ internal class DepartmentSearchRequest internal constructor(
             .execute()
 
     override fun filterBy(vararg chips: Chip): DepartmentSearchRequest =
-        filter(flattenAttributes(chips.flatMap { it.attributes.toList() }))
+            filter("chip",
+                chipsSerializer,
+                { mapOf("attributes" to it) },
+                { it["attributes"].orEmpty() })(flattenAttributes(chips.flatMap { it.attributes.toList() }))
 
     override fun filterBy(vararg filters: Filter): DepartmentSearchRequest =
-        filter(filters.groupBy({ it.field }, { it.value }))
+            filter("attributes",
+                attributesSerializer,
+                { it },
+                { it })(filters.groupBy({ it.field }, { it.value }))
 
-    private fun flattenAttributes(source: List<Pair<String, List<String>>>): Map<String, List<String>> =
+    private fun flattenAttributes(source: List<Pair<String, List<String>>>): ListOfAttributes =
         source.groupBy({ it.first }, { it.second })
             .mapValues { it.value.flatten() }
 
-    private fun filter(next: Map<String, List<String>>): DepartmentSearchRequest {
-        val serializer =
-            (StringSerializer to StringSerializer.list).map
-        val previous =
-            Json.parse(
-                serializer,
-                uri.parameters["attributes"] ?: "{}"
+    private fun <T> filter(key: String,
+                           serializer: KSerializer<T>,
+                           output: (ListOfAttributes) -> T,
+                           input: (T) -> ListOfAttributes): (ListOfAttributes) -> DepartmentSearchRequest {
+        return { next ->
+            val previous = input(
+                Json.parse(
+                    serializer,
+                    uri.parameters[key] ?: "{}"
+                )
             )
-        val union: Map<String, List<String>> =
-            flattenAttributes(previous.toList() + next.toList())
-                .toList()
-                .associateBy({ it.first }, { it.second.distinct() })
-        uri.parameters["attributes"] =
-            Json.stringify(
-                serializer,
-                union
+            val union =
+                flattenAttributes(previous.toList() + next.toList())
+                    .toList()
+                    .associateBy({ it.first }, { it.second.distinct() })
+            uri.parameters[key] =
+                Json.stringify(
+                    serializer,
+                    output(union)
+                )
+            DepartmentSearchRequest(
+                client,
+                uri
             )
-        return DepartmentSearchRequest(
-            client,
-            uri
-        )
+        }
     }
 }

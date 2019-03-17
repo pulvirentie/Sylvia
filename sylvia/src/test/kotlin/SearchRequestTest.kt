@@ -1,3 +1,5 @@
+import com.yoox.net.attributesSerializer
+import com.yoox.net.chipsSerializer
 import com.yoox.net.DepartmentSearchRequest
 import com.yoox.net.FilterableRequest
 import com.yoox.net.ItemsBuilder
@@ -95,17 +97,37 @@ class SearchRequestTest {
                         "Green",
                         "93",
                         "clr"
+                    ),
+                    Filter(
+                        false,
+                        "Suits and Blazers",
+                        "lttbgn1",
+                        "ctgr"
+                    )
+                )
+                .filterBy(
+                    Chip(
+                        "",
+                        hashMapOf("ctgr" to listOf("cntr2", "abc")),
+                        true
                     )
                 )
             val byDepartmentRequest: DepartmentSearchRequest = request as DepartmentSearchRequest
             assertEquals("men", byDepartmentRequest.uri.parameters["dept"])
-            val actual = Json.parse(
-                (StringSerializer to StringSerializer.list).map,
+            val attributes = Json.parse(
+                attributesSerializer,
                 byDepartmentRequest.uri.parameters["attributes"] ?: "{}"
             )
-            assertEquals(2, actual.keys.size)
-            assertEquals(listOf("cntr2", "brs", "lttbgn1", "ccssr", "rt1"), actual["ctgr"])
-            assertEquals(listOf("25", "21", "22", "93"), actual["clr"])
+            assertEquals(2, attributes.keys.size)
+            assertEquals(listOf("lttbgn1", "ccssr", "rt1"), attributes["ctgr"])
+            assertEquals(listOf("21", "93"), attributes["clr"])
+            val chips = Json.parse(
+                chipsSerializer,
+                byDepartmentRequest.uri.parameters["chip"] ?: "{}"
+            )["attributes"].orEmpty()
+            assertEquals(2, chips.keys.size)
+            assertEquals(listOf("cntr2", "brs", "lttbgn1", "abc"), chips["ctgr"])
+            assertEquals(listOf("25", "21", "22"), chips["clr"])
         }
     }
 }
