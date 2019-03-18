@@ -127,6 +127,11 @@ data class Filter(
     internal val field: String
 )
 
+data class PriceFilter(
+    val min: Int,
+    val max: Int
+)
+
 fun Iterable<Refinement>.colors(): Iterable<Refinement.Color> =
     filterIsInstance<Refinement.Color>()
 

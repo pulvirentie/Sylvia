@@ -5,6 +5,7 @@ import com.yoox.net.FilterableRequest
 import com.yoox.net.ItemsBuilder
 import com.yoox.net.models.outbound.Chip
 import com.yoox.net.models.outbound.Filter
+import com.yoox.net.models.outbound.PriceFilter
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.MockHttpResponse
 import io.ktor.http.HttpStatusCode
@@ -128,6 +129,32 @@ class SearchRequestTest {
             assertEquals(2, chips.keys.size)
             assertEquals(listOf("cntr2", "brs", "lttbgn1", "abc"), chips["ctgr"])
             assertEquals(listOf("25", "21", "22"), chips["clr"])
+        }
+    }
+
+    @Test
+    fun filterByPrice() {
+        val engine = MockEngine {
+            MockHttpResponse(
+                call,
+                HttpStatusCode.OK
+            )
+        }
+        runBlocking {
+            val filter = PriceFilter(10, 20)
+            val request: FilterableRequest = ItemsBuilder("uk")
+                .build(engine)
+                .search("men")
+                .filterBy(filter)
+            val byDepartmentRequest = request as DepartmentSearchRequest
+            assertEquals("men", byDepartmentRequest.uri.parameters["dept"])
+            assertEquals(filter.min.toString(), byDepartmentRequest.uri.parameters["priceMin"])
+            assertEquals(filter.max.toString(), byDepartmentRequest.uri.parameters["priceMax"])
+            val actual = Json.parse(
+                (StringSerializer to StringSerializer.list).map,
+                request.uri.parameters["attributes"] ?: "{}"
+            )
+            assertEquals(0, actual.keys.size)
         }
     }
 }

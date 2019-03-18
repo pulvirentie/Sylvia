@@ -5,6 +5,7 @@ import com.yoox.net.mapping.toOutboundSearchResults
 import com.yoox.net.models.outbound.Chip
 import com.yoox.net.models.outbound.Filter
 import com.yoox.net.models.outbound.Item
+import com.yoox.net.models.outbound.PriceFilter
 import com.yoox.net.models.outbound.SearchResults
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
@@ -61,6 +62,8 @@ interface FilterableRequest : Request<SearchResults> {
     fun filterBy(vararg chips: Chip): FilterableRequest
 
     fun filterBy(vararg filters: Filter): FilterableRequest
+
+    fun filterBy(filter: PriceFilter): FilterableRequest
 }
 
 internal val attributesSerializer =
@@ -93,6 +96,15 @@ internal class DepartmentSearchRequest internal constructor(
                 attributesSerializer,
                 { it },
                 { it })(filters.groupBy({ it.field }, { it.value }))
+
+    override fun filterBy(filter: PriceFilter): FilterableRequest {
+        uri.parameters["priceMin"] = filter.min.toString()
+        uri.parameters["priceMax"] = filter.max.toString()
+        return DepartmentSearchRequest(
+            client,
+            uri
+        )
+    }
 
     private fun flattenAttributes(source: List<Pair<String, List<String>>>): ListOfAttributes =
         source.groupBy({ it.first }, { it.second })
