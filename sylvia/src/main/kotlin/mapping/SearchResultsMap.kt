@@ -18,6 +18,7 @@ import com.yoox.net.models.inbound.SearchResults as InboundSearchResults
 const val IMAGES_BASE_URL: String = "https://cdn.yoox.biz"
 const val IMAGE_EXTENSION: String = ".jpg"
 val IMAGES_FORMAT_SET: List<String> = listOf("_9_f", "_10_f", "_11_f", "_13_f")
+const val PREVIEW_IMAGE_FORMAT: String = "_10_f"
 
 internal fun InboundSearchResults.toOutboundSearchResults(): SearchResults {
     return SearchResults(
@@ -43,7 +44,7 @@ internal fun InboundSearchResults.toOutboundSearchResults(): SearchResults {
                 },
                 Price(it.fullPrice.toFloat(), it.formattedFullPrice),
                 Price(it.discountedPrice.toFloat(), it.formattedDiscountedPrice),
-                buildImageUrl(it.cod10, "_10_f"),
+                buildImageUrl(it.cod10, PREVIEW_IMAGE_FORMAT),
                 it.cod10
             )
         },
@@ -57,7 +58,7 @@ internal fun InboundSearchResults.toOutboundSearchResults(): SearchResults {
     )
 }
 
-private fun buildImageUrl(cod10: String, format: String) =
+internal fun buildImageUrl(cod10: String, format: String) =
     "$IMAGES_BASE_URL/${cod10.substring(0, 2)}/$cod10$format$IMAGE_EXTENSION"
 
 typealias RefinementBuilder<T> = (String, List<Filter>, Boolean) -> T
