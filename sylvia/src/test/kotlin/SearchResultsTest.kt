@@ -7,7 +7,6 @@ class SearchResultsTest {
     fun refinements() {
         val searchResults = SearchResults(
             listOf(),
-            listOf(),
             listOf(
                 Refinement.Category(
                     "Categories",

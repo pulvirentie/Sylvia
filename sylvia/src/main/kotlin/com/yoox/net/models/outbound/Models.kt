@@ -70,7 +70,6 @@ data class Price(
 
 data class SearchResults(
     val items: List<SearchResultItem>,
-    val chips: List<Chip>,
     val refinements: List<Refinement>,
     val stats: SearchStats
 )
@@ -89,12 +88,6 @@ data class SearchResultColor(
     val name: String,
     val rgb: String,
     val images: List<String>
-)
-
-data class Chip(
-    val label: String,
-    val attributes: Map<String, List<String>>,
-    val active: Boolean
 )
 
 sealed class Refinement {

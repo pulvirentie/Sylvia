@@ -1,9 +1,7 @@
 import com.yoox.net.attributesSerializer
-import com.yoox.net.chipsSerializer
 import com.yoox.net.DepartmentSearchRequest
 import com.yoox.net.FilterableRequest
 import com.yoox.net.ItemsBuilder
-import com.yoox.net.models.outbound.Chip
 import com.yoox.net.models.outbound.Filter
 import com.yoox.net.models.outbound.PriceFilter
 import io.ktor.client.engine.mock.MockEngine
@@ -52,23 +50,6 @@ class SearchRequestTest {
                 .build(engine)
                 .search("men")
                 .filterBy(
-                    Chip(
-                        "",
-                        hashMapOf("ctgr" to listOf("cntr2")),
-                        true
-                    ),
-                    Chip(
-                        "",
-                        hashMapOf("clr" to listOf("25", "21", "22")),
-                        false
-                    ),
-                    Chip(
-                        "",
-                        hashMapOf("ctgr" to listOf("brs", "lttbgn1")),
-                        false
-                    )
-                )
-                .filterBy(
                     Filter(
                         false,
                         "Suits and Blazers",
@@ -106,13 +87,6 @@ class SearchRequestTest {
                         "ctgr"
                     )
                 )
-                .filterBy(
-                    Chip(
-                        "",
-                        hashMapOf("ctgr" to listOf("cntr2", "abc")),
-                        true
-                    )
-                )
             val byDepartmentRequest: DepartmentSearchRequest = request as DepartmentSearchRequest
             assertEquals("men", byDepartmentRequest.uri.parameters["dept"])
             val attributes = Json.parse(
@@ -122,13 +96,6 @@ class SearchRequestTest {
             assertEquals(2, attributes.keys.size)
             assertEquals(listOf("lttbgn1", "ccssr", "rt1"), attributes["ctgr"])
             assertEquals(listOf("21", "93"), attributes["clr"])
-            val chips = Json.parse(
-                chipsSerializer,
-                byDepartmentRequest.uri.parameters["chip"] ?: "{}"
-            )["attributes"].orEmpty()
-            assertEquals(2, chips.keys.size)
-            assertEquals(listOf("cntr2", "brs", "lttbgn1", "abc"), chips["ctgr"])
-            assertEquals(listOf("25", "21", "22"), chips["clr"])
         }
     }
 

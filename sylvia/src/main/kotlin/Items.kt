@@ -2,7 +2,6 @@ package com.yoox.net
 
 import com.yoox.net.mapping.toOutboundItem
 import com.yoox.net.mapping.toOutboundSearchResults
-import com.yoox.net.models.outbound.Chip
 import com.yoox.net.models.outbound.Filter
 import com.yoox.net.models.outbound.Item
 import com.yoox.net.models.outbound.PriceFilter
@@ -59,8 +58,6 @@ class Items(
 }
 
 interface FilterableRequest : Request<SearchResults> {
-    fun filterBy(vararg chips: Chip): FilterableRequest
-
     fun filterBy(vararg filters: Filter): FilterableRequest
 
     fun filterBy(filter: PriceFilter): FilterableRequest
@@ -70,8 +67,6 @@ interface FilterableRequest : Request<SearchResults> {
 
 internal val attributesSerializer =
     (StringSerializer to StringSerializer.list).map
-internal val chipsSerializer =
-    (StringSerializer to attributesSerializer).map
 
 typealias ListOfAttributes = Map<String, List<String>>
 
@@ -86,12 +81,6 @@ internal class DepartmentSearchRequest internal constructor(
             InboundSearchResults.serializer()
         ).map(InboundSearchResults::toOutboundSearchResults)
             .execute()
-
-    override fun filterBy(vararg chips: Chip): DepartmentSearchRequest =
-            filter("chip",
-                chipsSerializer,
-                { mapOf("attributes" to it) },
-                { it["attributes"].orEmpty() })(chips.flatMap { it.attributes.toList() }.flattenAttributes())
 
     override fun filterBy(vararg filters: Filter): DepartmentSearchRequest =
             filter("attributes",

@@ -32,7 +32,6 @@ internal fun InboundSearchResults.toOutboundSearchResults(): SearchResults {
             Price(it.discountedPrice.toFloat(), it.formattedDiscountedPrice)
         )
     },
-        this.chips.map { Chip(it.label, it.attributes, it.isSelected) },
         this.refinements?.filters?.attributes.orEmpty().mapNotNull { buildRefinement(it) },
         SearchStats(
             this.analytics.totalPages,

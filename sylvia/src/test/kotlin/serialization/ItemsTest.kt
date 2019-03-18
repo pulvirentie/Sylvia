@@ -17,7 +17,6 @@ import com.yoox.net.models.outbound.*
 import com.yoox.net.models.inbound.Attribute as InboundAttribute
 import com.yoox.net.models.inbound.CategoryAttribute as InboundCategoryAttribute
 import com.yoox.net.models.inbound.AttributeUrl as InboundAttributeUrl
-import com.yoox.net.models.inbound.Chip as InboundChip
 import com.yoox.net.models.inbound.Color as InboundColor
 import com.yoox.net.models.inbound.ColorSizeQty as InboundColorSizeQty
 import com.yoox.net.models.inbound.CommonFormattedPrices as InboundCommonFormattedPrices
@@ -180,18 +179,6 @@ class ItemsTest {
     fun jsonToSearchResults() {
         runBlocking {
             val inboundSearchResults = InboundSearchResults(
-                listOf(
-                    InboundChip(
-                        "Suits and Blazers",
-                        true,
-                        hashMapOf("ctgr" to listOf("x"))
-                    ),
-                    InboundChip(
-                        "Grey",
-                        false,
-                        hashMapOf("clr" to listOf("25"))
-                    )
-                ),
                 "MEN",
                 InboundRefinements(
                     InboundFilters(
@@ -298,18 +285,6 @@ class ItemsTest {
                             690f,
                             "690.00"
                         )
-                    )
-                ),
-                listOf(
-                    Chip(
-                        "Suits and Blazers",
-                        hashMapOf("ctgr" to listOf("x")),
-                        true
-                    ),
-                    Chip(
-                        "Grey",
-                        hashMapOf("clr" to listOf("25")),
-                        false
                     )
                 ),
                 listOf(
