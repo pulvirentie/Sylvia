@@ -24,6 +24,10 @@ class SearchResultsTest {
                     listOf(),
                     true
                 )
+            ),
+            SearchStats(13,
+                41,
+                1
             )
         )
         Assert.assertEquals(1, searchResults.refinements.colors().count())

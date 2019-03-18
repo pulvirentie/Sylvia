@@ -64,6 +64,8 @@ interface FilterableRequest : Request<SearchResults> {
     fun filterBy(vararg filters: Filter): FilterableRequest
 
     fun filterBy(filter: PriceFilter): FilterableRequest
+
+    fun page(index: Int): FilterableRequest
 }
 
 internal val attributesSerializer =
@@ -89,7 +91,7 @@ internal class DepartmentSearchRequest internal constructor(
             filter("chip",
                 chipsSerializer,
                 { mapOf("attributes" to it) },
-                { it["attributes"].orEmpty() })(flattenAttributes(chips.flatMap { it.attributes.toList() }))
+                { it["attributes"].orEmpty() })(chips.flatMap { it.attributes.toList() }.flattenAttributes())
 
     override fun filterBy(vararg filters: Filter): DepartmentSearchRequest =
             filter("attributes",
@@ -106,8 +108,16 @@ internal class DepartmentSearchRequest internal constructor(
         )
     }
 
-    private fun flattenAttributes(source: List<Pair<String, List<String>>>): ListOfAttributes =
-        source.groupBy({ it.first }, { it.second })
+    override fun page(index: Int): FilterableRequest {
+        uri.parameters["page"] = index.toString()
+        return DepartmentSearchRequest(
+            client,
+            uri
+        )
+    }
+
+    private fun List<Pair<String, List<String>>>.flattenAttributes(): ListOfAttributes =
+        groupBy({ it.first }, { it.second })
             .mapValues { it.value.flatten() }
 
     private fun <T> filter(key: String,
@@ -122,7 +132,7 @@ internal class DepartmentSearchRequest internal constructor(
                 )
             )
             val union =
-                flattenAttributes(previous.toList() + next.toList())
+                (previous.toList() + next.toList()).flattenAttributes()
                     .toList()
                     .associateBy({ it.first }, { it.second.distinct() })
             uri.parameters[key] =

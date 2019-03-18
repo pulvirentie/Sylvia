@@ -147,14 +147,29 @@ class SearchRequestTest {
                 .search("men")
                 .filterBy(filter)
             val byDepartmentRequest = request as DepartmentSearchRequest
-            assertEquals("men", byDepartmentRequest.uri.parameters["dept"])
             assertEquals(filter.min.toString(), byDepartmentRequest.uri.parameters["priceMin"])
             assertEquals(filter.max.toString(), byDepartmentRequest.uri.parameters["priceMax"])
-            val actual = Json.parse(
-                (StringSerializer to StringSerializer.list).map,
-                request.uri.parameters["attributes"] ?: "{}"
+        }
+    }
+
+    @Test
+    fun paged() {
+        val engine = MockEngine {
+            MockHttpResponse(
+                call,
+                HttpStatusCode.OK
             )
-            assertEquals(0, actual.keys.size)
+        }
+        runBlocking {
+            val filter = PriceFilter(10, 20)
+            val pageIndex = 4
+            val request: FilterableRequest = ItemsBuilder("uk")
+                .build(engine)
+                .search("men")
+                .filterBy(filter)
+                .page(pageIndex)
+            val byDepartmentRequest = request as DepartmentSearchRequest
+            assertEquals(pageIndex.toString(), byDepartmentRequest.uri.parameters["page"])
         }
     }
 }

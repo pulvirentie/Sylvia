@@ -113,7 +113,8 @@ internal data class SearchResults(
     @Optional @SerialName("Chips") val chips: List<Chip> = listOf(),
     @SerialName("SearchResultTitle") val searchResultTitle: String,
     @Optional @SerialName("Refinements") val refinements: Refinements? = null,
-    @Optional @SerialName("Items") val items: List<SearchResultItem> = listOf()
+    @Optional @SerialName("Items") val items: List<SearchResultItem> = listOf(),
+    @SerialName("Analytics") val analytics: Analytics
 )
 
 @Serializable
@@ -176,4 +177,13 @@ internal data class SearchResultColor(
     @SerialName("Cod10") val cod10: String,
     @SerialName("Description") val description: String,
     @SerialName("Rgb") val rgb: String
+)
+
+@Serializable
+internal data class Analytics(
+    @SerialName("TypedTextSearch") val typedTextSearch: String,
+    @SerialName("TotalPages") val totalPages: Int,
+    @SerialName("ItemPerPage") val itemPerPage: Int,
+    @SerialName("SelectedPage") val selectedPage: Int,
+    @SerialName("TotalItems") val totalItems: Int
 )

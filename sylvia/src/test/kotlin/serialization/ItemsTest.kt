@@ -12,6 +12,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import com.yoox.net.ItemsBuilder
 import com.yoox.net.Request
+import com.yoox.net.models.inbound.Analytics
 import com.yoox.net.models.outbound.*
 import com.yoox.net.models.inbound.Attribute as InboundAttribute
 import com.yoox.net.models.inbound.CategoryAttribute as InboundCategoryAttribute
@@ -251,6 +252,13 @@ class ItemsTest {
                             )
                         )
                     )
+                ),
+                Analytics(
+                    "",
+                    13,
+                    4,
+                    1,
+                    41
                 )
             )
             val rawInboundSearchResults = Json.stringify(
@@ -323,6 +331,11 @@ class ItemsTest {
                         ),
                         true
                     )
+                ),
+                SearchStats(
+                    13,
+                    41,
+                    1
                 )
             )
             val engine = MockEngine {
