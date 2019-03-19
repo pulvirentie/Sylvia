@@ -70,8 +70,8 @@ data class Price(
 
 data class SearchResults(
     val items: List<SearchResultItem>,
-    val chips: List<Chip>,
-    val refinements: List<Refinement>
+    val refinements: List<Refinement>,
+    val stats: SearchStats
 )
 
 data class SearchResultItem(
@@ -88,12 +88,6 @@ data class SearchResultColor(
     val name: String,
     val rgb: String,
     val images: List<String>
-)
-
-data class Chip(
-    val label: String,
-    val attributes: Map<String, List<String>>,
-    val active: Boolean
 )
 
 sealed class Refinement {
@@ -125,6 +119,17 @@ data class Filter(
     val label: String,
     internal val value: String,
     internal val field: String
+)
+
+data class PriceFilter(
+    val min: Int,
+    val max: Int
+)
+
+data class SearchStats(
+    val pageCount: Int,
+    val itemCount: Int,
+    val currentPageIndex: Int
 )
 
 fun Iterable<Refinement>.colors(): Iterable<Refinement.Color> =

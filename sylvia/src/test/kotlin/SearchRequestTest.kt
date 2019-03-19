@@ -1,8 +1,9 @@
+import com.yoox.net.attributesSerializer
 import com.yoox.net.DepartmentSearchRequest
 import com.yoox.net.FilterableRequest
 import com.yoox.net.ItemsBuilder
-import com.yoox.net.models.outbound.Chip
 import com.yoox.net.models.outbound.Filter
+import com.yoox.net.models.outbound.PriceFilter
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.MockHttpResponse
 import io.ktor.http.HttpStatusCode
@@ -49,23 +50,6 @@ class SearchRequestTest {
                 .build(engine)
                 .search("men")
                 .filterBy(
-                    Chip(
-                        "",
-                        hashMapOf("ctgr" to listOf("cntr2")),
-                        true
-                    ),
-                    Chip(
-                        "",
-                        hashMapOf("clr" to listOf("25", "21", "22")),
-                        false
-                    ),
-                    Chip(
-                        "",
-                        hashMapOf("ctgr" to listOf("brs", "lttbgn1")),
-                        false
-                    )
-                )
-                .filterBy(
                     Filter(
                         false,
                         "Suits and Blazers",
@@ -95,17 +79,64 @@ class SearchRequestTest {
                         "Green",
                         "93",
                         "clr"
+                    ),
+                    Filter(
+                        false,
+                        "Suits and Blazers",
+                        "lttbgn1",
+                        "ctgr"
                     )
                 )
             val byDepartmentRequest: DepartmentSearchRequest = request as DepartmentSearchRequest
             assertEquals("men", byDepartmentRequest.uri.parameters["dept"])
-            val actual = Json.parse(
-                (StringSerializer to StringSerializer.list).map,
+            val attributes = Json.parse(
+                attributesSerializer,
                 byDepartmentRequest.uri.parameters["attributes"] ?: "{}"
             )
-            assertEquals(2, actual.keys.size)
-            assertEquals(listOf("cntr2", "brs", "lttbgn1", "ccssr", "rt1"), actual["ctgr"])
-            assertEquals(listOf("25", "21", "22", "93"), actual["clr"])
+            assertEquals(2, attributes.keys.size)
+            assertEquals(listOf("lttbgn1", "ccssr", "rt1"), attributes["ctgr"])
+            assertEquals(listOf("21", "93"), attributes["clr"])
+        }
+    }
+
+    @Test
+    fun filterByPrice() {
+        val engine = MockEngine {
+            MockHttpResponse(
+                call,
+                HttpStatusCode.OK
+            )
+        }
+        runBlocking {
+            val filter = PriceFilter(10, 20)
+            val request: FilterableRequest = ItemsBuilder("uk")
+                .build(engine)
+                .search("men")
+                .filterBy(filter)
+            val byDepartmentRequest = request as DepartmentSearchRequest
+            assertEquals(filter.min.toString(), byDepartmentRequest.uri.parameters["priceMin"])
+            assertEquals(filter.max.toString(), byDepartmentRequest.uri.parameters["priceMax"])
+        }
+    }
+
+    @Test
+    fun paged() {
+        val engine = MockEngine {
+            MockHttpResponse(
+                call,
+                HttpStatusCode.OK
+            )
+        }
+        runBlocking {
+            val filter = PriceFilter(10, 20)
+            val pageIndex = 4
+            val request: FilterableRequest = ItemsBuilder("uk")
+                .build(engine)
+                .search("men")
+                .filterBy(filter)
+                .page(pageIndex)
+            val byDepartmentRequest = request as DepartmentSearchRequest
+            assertEquals(pageIndex.toString(), byDepartmentRequest.uri.parameters["page"])
         }
     }
 }

@@ -7,7 +7,6 @@ class SearchResultsTest {
     fun refinements() {
         val searchResults = SearchResults(
             listOf(),
-            listOf(),
             listOf(
                 Refinement.Category(
                     "Categories",
@@ -24,6 +23,10 @@ class SearchResultsTest {
                     listOf(),
                     true
                 )
+            ),
+            SearchStats(13,
+                41,
+                1
             )
         )
         Assert.assertEquals(1, searchResults.refinements.colors().count())

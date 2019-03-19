@@ -32,8 +32,12 @@ internal fun InboundSearchResults.toOutboundSearchResults(): SearchResults {
             Price(it.discountedPrice.toFloat(), it.formattedDiscountedPrice)
         )
     },
-        this.chips.map { Chip(it.label, it.attributes, it.isSelected) },
-        this.refinements?.filters?.attributes.orEmpty().mapNotNull { buildRefinement(it) })
+        this.refinements?.filters?.attributes.orEmpty().mapNotNull { buildRefinement(it) },
+        SearchStats(
+            this.analytics.totalPages,
+            this.analytics.totalItems,
+            this.analytics.selectedPage
+        ))
 }
 
 typealias RefinementBuilder<T> = (String, List<Filter>, Boolean) -> T
