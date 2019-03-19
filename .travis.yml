@@ -3,5 +3,10 @@ language: java
 jdk:
   - oraclejdk8
 
+before_script:
+  - chmod +x scripts/*.sh
+  - chmod +x scripts/*.py
+
 script:
-  - ./gradlew build --console plain
+  - ./gradlew build
+  - scripts/review.sh
