@@ -13,7 +13,6 @@ interface Request<T> {
 
 fun <T, R> Request<T>.map(f: (T) -> R): Request<R> = MapRequest(request = this, map = f)
 
-
 internal class KtorRequest<T>(
     private val client: HttpClient,
     private val uri: URLBuilder,
@@ -26,7 +25,6 @@ internal class KtorRequest<T>(
         }
         return Json.nonstrict.parse(serializer, stringResult)
     }
-
 }
 
 private class MapRequest<T, R>(

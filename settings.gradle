@@ -1,2 +1,2 @@
-include ':sylvia'
+include ':sylvia', ':androidcallback'
 
