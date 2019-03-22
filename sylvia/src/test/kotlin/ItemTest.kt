@@ -1,6 +1,16 @@
-import org.junit.Assert.*
+import com.yoox.net.models.outbound.Brand
+import com.yoox.net.models.outbound.Category
+import com.yoox.net.models.outbound.CategoryName
+import com.yoox.net.models.outbound.Color
+import com.yoox.net.models.outbound.Department
+import com.yoox.net.models.outbound.Image
+import com.yoox.net.models.outbound.Item
+import com.yoox.net.models.outbound.Price
+import com.yoox.net.models.outbound.SaleLine
+import com.yoox.net.models.outbound.Size
+import com.yoox.net.models.outbound.globalAvailability
+import org.junit.Assert.assertEquals
 import org.junit.Test
-import com.yoox.net.models.outbound.*
 
 class ItemTest {
     @Test
@@ -71,7 +81,8 @@ class ItemTest {
                 )
             ),
             Price(1051.00f, "1,051.00"),
-            Price(902.00f, "902.00")
+            Price(902.00f, "902.00"),
+            "http://exampl.ecom/image.png"
         )
         assertEquals(5, item.globalAvailability())
         assertEquals(2, item.colors[0].globalAvailability())

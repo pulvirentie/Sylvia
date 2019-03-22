@@ -32,7 +32,8 @@ internal data class Item(
 @Serializable
 internal data class ImageUrls(
     @SerialName("Normal") val normal: List<String>,
-    @SerialName("Zoom") val zoom: List<String>
+    @SerialName("Zoom") val zoom: List<String>,
+    @SerialName("Soldout") val soldout: String
 )
 
 @Serializable

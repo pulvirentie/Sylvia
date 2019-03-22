@@ -8,7 +8,8 @@ data class Item(
     val saleLine: SaleLine,
     val colors: List<Color>,
     val fullPrice: Price,
-    val discountedPrice: Price
+    val discountedPrice: Price,
+    val previewImage: String
 )
 
 fun Item.globalAvailability(): Int =
@@ -71,6 +72,7 @@ data class Price(
 data class SearchResults(
     val items: List<SearchResultItem>,
     val refinements: List<Refinement>,
+    val prices: Prices,
     val stats: SearchStats
 )
 
@@ -79,7 +81,9 @@ data class SearchResultItem(
     val category: Category,
     val colors: List<SearchResultColor>,
     val fullPrice: Price,
-    val discountedPrice: Price
+    val discountedPrice: Price,
+    val previewImage: String,
+    val id: String
 )
 
 data class SearchResultColor(
@@ -119,6 +123,12 @@ data class Filter(
     val label: String,
     internal val value: String,
     internal val field: String
+)
+
+data class Prices(
+    val availableMin: Int,
+    val availableMax: Int,
+    val currentFilter: PriceFilter
 )
 
 data class PriceFilter(
