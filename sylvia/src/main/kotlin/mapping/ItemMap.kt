@@ -1,6 +1,15 @@
 package com.yoox.net.mapping
 
-import com.yoox.net.models.outbound.*
+import com.yoox.net.models.outbound.Brand
+import com.yoox.net.models.outbound.Category
+import com.yoox.net.models.outbound.CategoryName
+import com.yoox.net.models.outbound.Color
+import com.yoox.net.models.outbound.Department
+import com.yoox.net.models.outbound.Image
+import com.yoox.net.models.outbound.Item
+import com.yoox.net.models.outbound.Price
+import com.yoox.net.models.outbound.SaleLine
+import com.yoox.net.models.outbound.Size
 import com.yoox.net.models.inbound.Color as InboundColor
 import com.yoox.net.models.inbound.ColorSizeQty as InboundColorSizeQty
 import com.yoox.net.models.inbound.Item as InboundItem
@@ -42,7 +51,8 @@ internal fun InboundItem.toOutboundItem(): Item {
         Price(
             this.commonFormattedPrices.discounted.valueCent / 100f,
             this.formattedPrice.discountedPrice
-        )
+        ),
+        imageUrls.soldout
     )
 }
 

@@ -1,9 +1,8 @@
 package serialization
 
-import org.junit.Assert.*
-import org.junit.Test
 import com.yoox.net.ItemsBuilder
 import com.yoox.net.Request
+import com.yoox.net.models.inbound.Analytics
 import com.yoox.net.models.outbound.Brand
 import com.yoox.net.models.outbound.Category
 import com.yoox.net.models.outbound.CategoryName
@@ -13,11 +12,14 @@ import com.yoox.net.models.outbound.Filter
 import com.yoox.net.models.outbound.Image
 import com.yoox.net.models.outbound.Item
 import com.yoox.net.models.outbound.Price
+import com.yoox.net.models.outbound.PriceFilter
+import com.yoox.net.models.outbound.Prices
 import com.yoox.net.models.outbound.Refinement
 import com.yoox.net.models.outbound.SaleLine
 import com.yoox.net.models.outbound.SearchResultColor
 import com.yoox.net.models.outbound.SearchResultItem
 import com.yoox.net.models.outbound.SearchResults
+import com.yoox.net.models.outbound.SearchStats
 import com.yoox.net.models.outbound.Size
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.MockHttpResponse
@@ -27,8 +29,8 @@ import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.io.ByteReadChannel
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
-import com.yoox.net.models.inbound.Analytics
-import com.yoox.net.models.outbound.*
+import org.junit.Assert.assertEquals
+import org.junit.Test
 import com.yoox.net.models.inbound.Attribute as InboundAttribute
 import com.yoox.net.models.inbound.AttributeUrl as InboundAttributeUrl
 import com.yoox.net.models.inbound.CategoryAttribute as InboundCategoryAttribute
@@ -58,7 +60,8 @@ class ItemsTest {
             val inboundItem = InboundItem(
                 InboundImageUrls(
                     listOf("http://exampl.ecom/-COLOR-/image.png"),
-                    listOf("http://exampl.ecom/-COLOR-/image_zoom.png")
+                    listOf("http://exampl.ecom/-COLOR-/image_zoom.png"),
+                    "http://exampl.ecom/-COLOR-/soldout.png"
                 ),
                 InboundItemDescriptions(listOf()),
                 InboundCommonFormattedPrices(
@@ -175,7 +178,8 @@ class ItemsTest {
                     )
                 ),
                 Price(1051.00f, "1,051.00"),
-                Price(902.00f, "902.00")
+                Price(902.00f, "902.00"),
+                "http://exampl.ecom/-COLOR-/soldout.png"
             )
             val engine = MockEngine {
                 MockHttpResponse(
@@ -300,7 +304,9 @@ class ItemsTest {
                         Price(
                             690f,
                             "690.00"
-                        )
+                        ),
+                        "https://cdn.yoox.biz/49/49441077GJ_10_f.jpg",
+                        "49441077GJ"
                     )
                 ),
                 listOf(
@@ -321,6 +327,14 @@ class ItemsTest {
                             )
                         ),
                         true
+                    )
+                ),
+                Prices(
+                    20,
+                    3200,
+                    PriceFilter(
+                        20,
+                        3200
                     )
                 ),
                 SearchStats(

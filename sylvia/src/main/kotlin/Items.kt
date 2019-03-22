@@ -13,6 +13,7 @@ import io.ktor.client.engine.okhttp.OkHttpEngine
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.json.serializer.KotlinxSerializer
 import io.ktor.http.URLBuilder
+import io.ktor.http.clone
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.internal.StringSerializer
 import kotlinx.serialization.json.Json
@@ -26,6 +27,7 @@ const val API_BASE_URL: String = "https://$AUTHORITY/YooxCore.API/1.0/"
 const val DIVISION_CODE: String = "YOOX"
 
 class ItemsBuilder(private val country: String) {
+    @JvmOverloads
     fun build(engine: HttpClientEngine = OkHttpEngine(OkHttpConfig())): Items =
         Items(engine, country)
 }
@@ -63,6 +65,8 @@ interface FilterableRequest : Request<SearchResults> {
     fun filterBy(filter: PriceFilter): FilterableRequest
 
     fun page(index: Int): FilterableRequest
+
+    fun clone(): FilterableRequest
 }
 
 internal val attributesSerializer =
@@ -74,6 +78,10 @@ internal class DepartmentSearchRequest internal constructor(
     private val client: HttpClient,
     internal val uri: URLBuilder
 ) : FilterableRequest {
+    override fun clone(): FilterableRequest {
+        return DepartmentSearchRequest(client, uri.clone())
+    }
+
     override suspend fun execute(): SearchResults =
         KtorRequest(
             client,
@@ -83,10 +91,10 @@ internal class DepartmentSearchRequest internal constructor(
             .execute()
 
     override fun filterBy(vararg filters: Filter): DepartmentSearchRequest =
-            filter("attributes",
-                attributesSerializer,
-                { it },
-                { it })(filters.groupBy({ it.field }, { it.value }))
+        filter("attributes",
+            attributesSerializer,
+            { it },
+            { it })(filters.groupBy({ it.field }, { it.value }))
 
     override fun filterBy(filter: PriceFilter): FilterableRequest {
         uri.parameters["priceMin"] = filter.min.toString()
@@ -109,10 +117,12 @@ internal class DepartmentSearchRequest internal constructor(
         groupBy({ it.first }, { it.second })
             .mapValues { it.value.flatten() }
 
-    private fun <T> filter(key: String,
-                           serializer: KSerializer<T>,
-                           output: (ListOfAttributes) -> T,
-                           input: (T) -> ListOfAttributes): (ListOfAttributes) -> DepartmentSearchRequest {
+    private fun <T> filter(
+        key: String,
+        serializer: KSerializer<T>,
+        output: (ListOfAttributes) -> T,
+        input: (T) -> ListOfAttributes
+    ): (ListOfAttributes) -> DepartmentSearchRequest {
         return { next ->
             val previous = input(
                 Json.parse(

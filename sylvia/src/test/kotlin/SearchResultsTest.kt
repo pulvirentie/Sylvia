@@ -1,6 +1,13 @@
+import com.yoox.net.models.outbound.PriceFilter
+import com.yoox.net.models.outbound.Prices
+import com.yoox.net.models.outbound.Refinement
+import com.yoox.net.models.outbound.SearchResults
+import com.yoox.net.models.outbound.SearchStats
+import com.yoox.net.models.outbound.categories
+import com.yoox.net.models.outbound.colors
+import com.yoox.net.models.outbound.designers
 import org.junit.Assert
 import org.junit.Test
-import com.yoox.net.models.outbound.*
 
 class SearchResultsTest {
     @Test
@@ -24,7 +31,16 @@ class SearchResultsTest {
                     true
                 )
             ),
-            SearchStats(13,
+            Prices(
+                10,
+                15570,
+                PriceFilter(
+                    10,
+                    15570
+                )
+            ),
+            SearchStats(
+                13,
                 41,
                 1
             )
