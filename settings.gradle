@@ -1,2 +1,2 @@
-include ':sylvia', ':rx', ':androidcallback', 'samplekotlinapp'
+include ':sylvia', ':rx', ':androidcallback', 'samplekotlinapp', 'samplejavaapp'
 
