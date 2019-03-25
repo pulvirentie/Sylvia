@@ -30,7 +30,7 @@ import com.yoox.net.models.inbound.VisualSearch as InboundVisualSearch
 private const val AUTHORITY: String = "secure.api.yoox.biz"
 private const val API_BASE_URL: String = "https://$AUTHORITY/YooxCore.API/1.0/"
 private const val DIVISION_CODE: String = "YOOX"
-private const val VISUAL_SEARCH_BASE_URL = "http://ynappi-dev.azurewebsites.net/api/detected_items/IT"
+private const val VISUAL_SEARCH_BASE_URL = "https://ynappi-dev.azurewebsites.net/api/detected_items/IT"
 
 class ItemsBuilder(private val country: String) {
     @JvmOverloads
