@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">SampleRxJavaApp</string>
+    <string name="previous_page">Previous</string>
+    <string name="next_page">Next</string>
+    <string name="filter_color">Color</string>
+    <string name="filter_designer">Designer</string>
+    <string name="filter_category">Category</string>
+    <string name="filter_prices">Prices</string>
+    <string name="reset">Reset</string>
+</resources>
