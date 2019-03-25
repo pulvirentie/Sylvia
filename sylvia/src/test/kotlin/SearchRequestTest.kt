@@ -1,7 +1,7 @@
-import com.yoox.net.attributesSerializer
 import com.yoox.net.DepartmentSearchRequest
 import com.yoox.net.FilterableRequest
 import com.yoox.net.ItemsBuilder
+import com.yoox.net.attributesSerializer
 import com.yoox.net.models.outbound.Filter
 import com.yoox.net.models.outbound.PriceFilter
 import io.ktor.client.engine.mock.MockEngine
