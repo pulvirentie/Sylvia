@@ -10,6 +10,7 @@ import com.yoox.net.models.outbound.Item
 import com.yoox.net.models.outbound.PriceFilter
 import com.yoox.net.models.outbound.SearchResults
 import com.yoox.net.models.outbound.VisualSearch
+import com.yoox.net.models.outbound.DepartmentType
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.okhttp.OkHttpConfig
@@ -61,10 +62,10 @@ class Items(
         )
             .map(InboundItem::toOutboundItem)
 
-    fun search(department: String): FilterableRequest =
+    fun search(department: DepartmentType): FilterableRequest =
         DepartmentSearchRequest(
             client,
-            URLBuilder("$API_BASE_URL${DIVISION_CODE}_${country.toUpperCase()}/SearchResults?dept=$department")
+            URLBuilder("$API_BASE_URL${DIVISION_CODE}_${country.toUpperCase()}/SearchResults?dept=${department.value}")
         )
 
     fun visualSearchByUrl(gender: Gender, url: String): Request<VisualSearch> =

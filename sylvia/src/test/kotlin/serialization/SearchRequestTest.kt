@@ -4,6 +4,7 @@ import com.yoox.net.DepartmentSearchRequest
 import com.yoox.net.FilterableRequest
 import com.yoox.net.ItemsBuilder
 import com.yoox.net.attributesSerializer
+import com.yoox.net.models.outbound.DepartmentType
 import com.yoox.net.models.outbound.Filter
 import com.yoox.net.models.outbound.PriceFilter
 import io.ktor.client.engine.mock.MockEngine
@@ -29,7 +30,7 @@ class SearchRequestTest {
         runBlocking {
             val request: FilterableRequest = ItemsBuilder("uk")
                 .build(engine)
-                .search("men")
+                .search(DepartmentType.Men)
             assertEquals("men", (request as DepartmentSearchRequest).uri.parameters["dept"])
             val actual = Json.parse(
                 (StringSerializer to StringSerializer.list).map,
@@ -50,7 +51,7 @@ class SearchRequestTest {
         runBlocking {
             val request: FilterableRequest = ItemsBuilder("uk")
                 .build(engine)
-                .search("men")
+                .search(DepartmentType.Men)
                 .filterBy(
                     Filter(
                         false,
@@ -113,7 +114,7 @@ class SearchRequestTest {
             val filter = PriceFilter(10, 20)
             val request: FilterableRequest = ItemsBuilder("uk")
                 .build(engine)
-                .search("men")
+                .search(DepartmentType.Men)
                 .filterBy(filter)
             val byDepartmentRequest = request as DepartmentSearchRequest
             assertEquals(filter.min.toString(), byDepartmentRequest.uri.parameters["priceMin"])
@@ -134,7 +135,7 @@ class SearchRequestTest {
             val pageIndex = 4
             val request: FilterableRequest = ItemsBuilder("uk")
                 .build(engine)
-                .search("men")
+                .search(DepartmentType.Men)
                 .filterBy(filter)
                 .page(pageIndex)
             val byDepartmentRequest = request as DepartmentSearchRequest
@@ -154,7 +155,7 @@ class SearchRequestTest {
             val text = "Jeans"
             val request: FilterableRequest = ItemsBuilder("uk")
                 .build(engine)
-                .search("men")
+                .search(DepartmentType.Men)
                 .filterBy(text)
             val byDepartmentRequest = request as DepartmentSearchRequest
             assertEquals(text, byDepartmentRequest.uri.parameters["textSearch"])

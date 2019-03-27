@@ -5,6 +5,18 @@ enum class Gender {
     Women,
 }
 
+enum class DepartmentType(internal val value: String) {
+    Men("men"),
+    Women("women"),
+    Art("art"),
+    GirlBaby("collgirl_baby"),
+    GirlKid("collgirl_kid"),
+    GirlJunior("collgirl_junior"),
+    BoyBaby("collboy_baby"),
+    BoyKid("collboy_kid"),
+    BoyJunior("collboy_junior")
+}
+
 data class Item(
     val department: Department,
     val brand: Brand,
