@@ -30,7 +30,8 @@ import com.yoox.net.models.inbound.VisualSearch as InboundVisualSearch
 private const val AUTHORITY: String = "secure.api.yoox.biz"
 private const val API_BASE_URL: String = "https://$AUTHORITY/YooxCore.API/1.0/"
 private const val DIVISION_CODE: String = "YOOX"
-private const val VISUAL_SEARCH_BASE_URL = "https://ynappi-dev.azurewebsites.net/api/detected_items/IT"
+private const val VISUAL_SEARCH_BASE_URL =
+    "https://ynappi-dev.azurewebsites.net/api/detected_items/IT"
 
 class ItemsBuilder(private val country: String) {
     @JvmOverloads
@@ -89,6 +90,8 @@ interface FilterableRequest : Request<SearchResults> {
 
     fun page(index: Int): FilterableRequest
 
+    fun filterBy(freeText: String): FilterableRequest
+
     fun clone(): FilterableRequest
 }
 
@@ -122,6 +125,14 @@ internal class DepartmentSearchRequest internal constructor(
     override fun filterBy(filter: PriceFilter): FilterableRequest {
         uri.parameters["priceMin"] = filter.min.toString()
         uri.parameters["priceMax"] = filter.max.toString()
+        return DepartmentSearchRequest(
+            client,
+            uri
+        )
+    }
+
+    override fun filterBy(freeText: String): FilterableRequest {
+        uri.parameters["textSearch"] = freeText
         return DepartmentSearchRequest(
             client,
             uri

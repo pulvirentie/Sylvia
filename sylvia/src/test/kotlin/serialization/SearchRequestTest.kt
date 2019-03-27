@@ -1,3 +1,5 @@
+package serialization
+
 import com.yoox.net.DepartmentSearchRequest
 import com.yoox.net.FilterableRequest
 import com.yoox.net.ItemsBuilder
@@ -137,6 +139,25 @@ class SearchRequestTest {
                 .page(pageIndex)
             val byDepartmentRequest = request as DepartmentSearchRequest
             assertEquals(pageIndex.toString(), byDepartmentRequest.uri.parameters["page"])
+        }
+    }
+
+    @Test
+    fun byFreeText() {
+        val engine = MockEngine {
+            MockHttpResponse(
+                call,
+                HttpStatusCode.OK
+            )
+        }
+        runBlocking {
+            val text = "Jeans"
+            val request: FilterableRequest = ItemsBuilder("uk")
+                .build(engine)
+                .search("men")
+                .filterBy(text)
+            val byDepartmentRequest = request as DepartmentSearchRequest
+            assertEquals(text, byDepartmentRequest.uri.parameters["textSearch"])
         }
     }
 }
