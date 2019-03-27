@@ -18,6 +18,7 @@ import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.json.serializer.KotlinxSerializer
 import io.ktor.http.URLBuilder
 import io.ktor.http.clone
+import kotlinx.io.InputStream
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.internal.StringSerializer
 import kotlinx.serialization.json.Json
@@ -31,7 +32,7 @@ private const val AUTHORITY: String = "secure.api.yoox.biz"
 private const val API_BASE_URL: String = "https://$AUTHORITY/YooxCore.API/1.0/"
 private const val DIVISION_CODE: String = "YOOX"
 private const val VISUAL_SEARCH_BASE_URL =
-    "https://ynappi-dev.azurewebsites.net/api/detected_items/IT"
+    "http://ynappi-dev.azurewebsites.net:80/api/search_by_image/IT"
 
 class ItemsBuilder(private val country: String) {
     fun build(): Items =
@@ -72,6 +73,15 @@ class Items(
 
     fun visualSearchByBase64(gender: Gender, base64: String): Request<VisualSearch> =
         visualSearch(gender, base64)
+
+    fun visualSearchByMultiPart(gender: Gender, data: InputStream): Request<VisualSearch> =
+        KtorRequest.SubmitForm(
+            client,
+            URLBuilder(VISUAL_SEARCH_BASE_URL),
+            InboundVisualSearch.serializer(),
+            gender.toVisualSearchGender(),
+            data
+        ).map(InboundVisualSearch::toOutboundVisualSearch)
 
     private fun visualSearch(gender: Gender, image: String): Request<VisualSearch> =
         KtorRequest.Post(
