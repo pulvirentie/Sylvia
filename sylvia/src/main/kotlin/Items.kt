@@ -34,8 +34,10 @@ private const val VISUAL_SEARCH_BASE_URL =
     "https://ynappi-dev.azurewebsites.net/api/detected_items/IT"
 
 class ItemsBuilder(private val country: String) {
-    @JvmOverloads
-    fun build(engine: HttpClientEngine = OkHttpEngine(OkHttpConfig())): Items =
+    fun build(): Items =
+        Items(OkHttpEngine(OkHttpConfig()), country)
+
+    internal fun build(engine: HttpClientEngine): Items =
         Items(engine, country)
 }
 
