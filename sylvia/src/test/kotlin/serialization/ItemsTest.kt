@@ -8,6 +8,7 @@ import com.yoox.net.models.outbound.Category
 import com.yoox.net.models.outbound.CategoryName
 import com.yoox.net.models.outbound.Color
 import com.yoox.net.models.outbound.Department
+import com.yoox.net.models.outbound.DepartmentType
 import com.yoox.net.models.outbound.Filter
 import com.yoox.net.models.outbound.Image
 import com.yoox.net.models.outbound.Item
@@ -353,7 +354,7 @@ class ItemsTest {
             }
             val actual = ItemsBuilder("uk")
                 .build(engine)
-                .search("men")
+                .search(DepartmentType.Men)
                 .execute()
             assertEquals(expected, actual)
         }
