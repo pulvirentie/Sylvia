@@ -163,11 +163,11 @@ data class SearchStats(
     val currentPageIndex: Int
 )
 
-fun Iterable<Refinement>.colors(): Iterable<Refinement.Color> =
-    filterIsInstance<Refinement.Color>()
+fun Iterable<Refinement>.colors() =
+    filterIsInstance<Refinement.Color>().first().filters.toList()
 
-fun Iterable<Refinement>.designers(): Iterable<Refinement.Designer> =
-    filterIsInstance<Refinement.Designer>()
+fun Iterable<Refinement>.designers() =
+    filterIsInstance<Refinement.Designer>().first().filters.toList()
 
-fun Iterable<Refinement>.categories(): Iterable<Refinement.Category> =
-    filterIsInstance<Refinement.Category>()
+fun Iterable<Refinement>.categories() =
+    filterIsInstance<Refinement.Category>().first().filters.toList()

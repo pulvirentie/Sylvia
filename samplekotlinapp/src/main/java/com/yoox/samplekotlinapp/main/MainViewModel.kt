@@ -18,7 +18,6 @@ import kotlinx.coroutines.launch
 import java.util.concurrent.ThreadLocalRandom
 
 class MainViewModel : ScopedViewModel() {
-
     private val items = ItemsBuilder("IT").build()
 
     private val stateLiveData = MutableLiveData<MainState>()
@@ -30,11 +29,9 @@ class MainViewModel : ScopedViewModel() {
     val error: LiveData<String>
         get() = errorLiveData
 
-
     internal fun loadItems() {
         val request = items.search(department)
         executeRequest(request)
-
     }
 
     private fun executeRequest(request: FilterableRequest) {
@@ -42,7 +39,6 @@ class MainViewModel : ScopedViewModel() {
         stateLiveData.value = loadingState
 
         scope.launch {
-
             try {
                 val result = request.execute()
                 onResult(request, result)
@@ -68,7 +64,6 @@ class MainViewModel : ScopedViewModel() {
         executeFilterRequest(request, filter)
     }
 
-
     internal fun designerFilter(request: FilterableRequest, mainState: MainState.Result) {
         val refinements = mainState.refinements
         val filter = designerFilter(refinements)
@@ -88,7 +83,6 @@ class MainViewModel : ScopedViewModel() {
             val filterRequest = request.filterBy(it)
             executeRequest(filterRequest)
         }
-
     }
 
     private fun onResult(request: FilterableRequest, searchResults: SearchResults) {
@@ -131,55 +125,28 @@ class MainViewModel : ScopedViewModel() {
     }
 
     private fun colorFilter(refinements: List<Refinement>): Filter? {
-
-        val colors = refinements.colors()
-        if (colors.iterator().hasNext()) {
-            val filters = colors.iterator().next().filters
-            if (!filters.isEmpty()) {
-                return randomFilter(filters)
-            }
-        }
-        return null
+        return randomFilter(refinements.colors())
     }
 
     private fun designerFilter(refinements: List<Refinement>): Filter? {
-
-        val designers = refinements.designers()
-        if (designers.iterator().hasNext()) {
-            val filters = designers.iterator().next().filters
-            if (!filters.isEmpty()) {
-                return randomFilter(filters)
-            }
-        }
-        return null
+        return randomFilter(refinements.designers())
     }
 
     private fun categoryFilter(refinements: List<Refinement>): Filter? {
-
-        val categories = refinements.categories()
-        if (categories.iterator().hasNext()) {
-            val filters = categories.iterator().next().filters
-            if (!filters.isEmpty()) {
-                return randomFilter(filters)
-            }
-        }
-        return null
+        return randomFilter(refinements.categories())
     }
 
     private fun priceFilter(prices: Prices): PriceFilter? {
-
         val availableMax = prices.availableMax
         if (prices.availableMin == 0 && availableMax == 0) {
             return null
         }
 
         val halfPrice = availableMax / 2
-
         val randomMin = ThreadLocalRandom.current().nextInt(0, halfPrice)
         val randomMax = ThreadLocalRandom.current().nextInt(halfPrice, availableMax)
 
         return PriceFilter(randomMin, randomMax)
-
     }
 
     private fun randomFilter(filters: List<Filter>): Filter {
@@ -188,8 +155,6 @@ class MainViewModel : ScopedViewModel() {
     }
 
     companion object {
-
         private val department = DepartmentType.Women
     }
-
 }

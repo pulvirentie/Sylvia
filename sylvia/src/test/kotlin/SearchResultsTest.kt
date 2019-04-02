@@ -1,11 +1,12 @@
+import com.yoox.net.models.outbound.categories
+import com.yoox.net.models.outbound.colors
+import com.yoox.net.models.outbound.designers
+import com.yoox.net.models.outbound.Filter
 import com.yoox.net.models.outbound.PriceFilter
 import com.yoox.net.models.outbound.Prices
 import com.yoox.net.models.outbound.Refinement
 import com.yoox.net.models.outbound.SearchResults
 import com.yoox.net.models.outbound.SearchStats
-import com.yoox.net.models.outbound.categories
-import com.yoox.net.models.outbound.colors
-import com.yoox.net.models.outbound.designers
 import org.junit.Assert
 import org.junit.Test
 
@@ -17,17 +18,26 @@ class SearchResultsTest {
             listOf(
                 Refinement.Category(
                     "Categories",
-                    listOf(),
+                    listOf(
+                        Filter(true, "shoes", "a", "b"),
+                        Filter(true, "bags", "c", "d"),
+                        Filter(true, "denim", "e", "f")
+                    ),
                     true
                 ),
                 Refinement.Color(
                     "Colors",
-                    listOf(),
+                    listOf(
+                        Filter(true, "red", "a", "b"),
+                        Filter(true, "blue", "c", "d")
+                    ),
                     true
                 ),
                 Refinement.Designer(
                     "Designers",
-                    listOf(),
+                    listOf(
+                        Filter(true, "YOOX", "a", "b")
+                    ),
                     true
                 )
             ),
@@ -45,8 +55,8 @@ class SearchResultsTest {
                 1
             )
         )
-        Assert.assertEquals(1, searchResults.refinements.colors().count())
-        Assert.assertEquals(1, searchResults.refinements.categories().count())
+        Assert.assertEquals(2, searchResults.refinements.colors().count())
+        Assert.assertEquals(3, searchResults.refinements.categories().count())
         Assert.assertEquals(1, searchResults.refinements.designers().count())
     }
 }
