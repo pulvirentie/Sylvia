@@ -16,7 +16,6 @@ class SizeAdapter internal constructor(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val context = parent.context
         val inflater = LayoutInflater.from(context)
-
         val contactView = inflater.inflate(R.layout.item_size, parent, false)
 
         return ViewHolder(contactView)
@@ -37,5 +36,4 @@ class SizeAdapter internal constructor(
             itemView.setOnClickListener { onItemSelectedListener(item) }
         }
     }
-
 }

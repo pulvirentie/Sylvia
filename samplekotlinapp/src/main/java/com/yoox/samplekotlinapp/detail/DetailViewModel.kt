@@ -8,7 +8,6 @@ import com.yoox.samplekotlinapp.common.ScopedViewModel
 import kotlinx.coroutines.launch
 
 class DetailViewModel : ScopedViewModel() {
-
     private val items = ItemsBuilder("IT").build()
 
     private val itemLiveData = MutableLiveData<Item>()
@@ -20,10 +19,7 @@ class DetailViewModel : ScopedViewModel() {
     val error: LiveData<String>
         get() = errorLiveData
 
-
     internal fun loadItem(id: String) {
-
-
         scope.launch {
             try {
                 val request = items.get(id)
@@ -33,7 +29,5 @@ class DetailViewModel : ScopedViewModel() {
                 errorLiveData.value = t.toString()
             }
         }
-
     }
-
 }
