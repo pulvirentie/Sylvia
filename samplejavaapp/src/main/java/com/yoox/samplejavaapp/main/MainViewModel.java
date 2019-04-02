@@ -9,14 +9,12 @@ import com.yoox.net.Items;
 import com.yoox.net.ItemsBuilder;
 import com.yoox.net.models.outbound.*;
 import com.yoox.sylvia.androidcallback.AndroidExecutor;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class MainViewModel extends ViewModel {
-
     private static final DepartmentType department = DepartmentType.Women;
 
     private final Items items = new ItemsBuilder("IT").build();
@@ -32,11 +30,9 @@ public class MainViewModel extends ViewModel {
         return errorLiveData;
     }
 
-
     void loadItems() {
         FilterableRequest request = items.search(department);
         executeRequest(request);
-
     }
 
     private void executeRequest(FilterableRequest request) {
@@ -62,7 +58,6 @@ public class MainViewModel extends ViewModel {
         Filter filter = colorFilter(refinements);
         executeFilterRequest(request, filter);
     }
-
 
     void designerFilter(FilterableRequest request, MainState mainState) {
         List<Refinement> refinements = mainState.getRefinements();
@@ -111,66 +106,35 @@ public class MainViewModel extends ViewModel {
 
     @Nullable
     private Filter colorFilter(List<Refinement> refinements) {
-
-        Iterable<Refinement.Color> colors = ModelsKt.colors(refinements);
-        if (colors.iterator().hasNext()) {
-            Refinement.Color color = colors.iterator().next();
-            List<Filter> filters = color.getFilters();
-            if (!filters.isEmpty()) {
-                return randomFilter(filters);
-            }
-        }
-        return null;
+        return randomFilter(ModelsKt.colors(refinements));
     }
 
     @Nullable
     private Filter designerFilter(List<Refinement> refinements) {
-
-        Iterable<Refinement.Designer> designers = ModelsKt.designers(refinements);
-        if (designers.iterator().hasNext()) {
-            Refinement.Designer designer = designers.iterator().next();
-            List<Filter> filters = designer.getFilters();
-            if (!filters.isEmpty()) {
-                return randomFilter(filters);
-            }
-        }
-        return null;
+        return randomFilter(ModelsKt.designers(refinements));
     }
 
     @Nullable
     private Filter categoryFilter(List<Refinement> refinements) {
-
-        Iterable<Refinement.Category> categories = ModelsKt.categories(refinements);
-        if (categories.iterator().hasNext()) {
-            Refinement.Category category = categories.iterator().next();
-            List<Filter> filters = category.getFilters();
-            if (!filters.isEmpty()) {
-                return randomFilter(filters);
-            }
-        }
-        return null;
+        return randomFilter(ModelsKt.categories(refinements));
     }
 
     @Nullable
     private PriceFilter priceFilter(Prices prices) {
-
         int availableMax = prices.getAvailableMax();
         if (prices.getAvailableMin() == 0 && availableMax == 0) {
             return null;
         }
 
         int halfPrice = availableMax / 2;
-
         int randomMin = ThreadLocalRandom.current().nextInt(0, halfPrice);
         int randomMax = ThreadLocalRandom.current().nextInt(halfPrice, availableMax);
 
         return new PriceFilter(randomMin, randomMax);
-
     }
 
     private Filter randomFilter(List<Filter> filters) {
         Random rand = ThreadLocalRandom.current();
         return filters.get(rand.nextInt(filters.size()));
     }
-
 }
