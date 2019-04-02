@@ -2,7 +2,6 @@ package com.yoox.net
 
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
-import io.ktor.client.request.post
 import io.ktor.client.request.url
 import io.ktor.http.URLBuilder
 import kotlinx.serialization.KSerializer
@@ -29,25 +28,6 @@ internal sealed class KtorRequest<T>(
         override suspend fun execute(): T {
             val stringResult = client.get<String> {
                 url(uri.buildString())
-            }
-            return parseJson(stringResult)
-        }
-    }
-
-    internal class Post<R : Any, T>(
-        client: HttpClient,
-        uri: URLBuilder,
-        serializer: KSerializer<T>,
-        private val body: R? = null
-    ) : KtorRequest<T>(client, uri, serializer) {
-
-        override suspend fun execute(): T {
-            val stringResult = client.post<String> {
-                url(uri.buildString())
-                headers.append("Content-Type", "application/json")
-                this@Post.body?.let {
-                    body = it
-                }
             }
             return parseJson(stringResult)
         }
