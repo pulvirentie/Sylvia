@@ -9,6 +9,7 @@ import com.yoox.net.models.outbound.CategoryName
 import com.yoox.net.models.outbound.Color
 import com.yoox.net.models.outbound.Department
 import com.yoox.net.models.outbound.Filter
+import com.yoox.net.models.outbound.Gender
 import com.yoox.net.models.outbound.Image
 import com.yoox.net.models.outbound.Item
 import com.yoox.net.models.outbound.Price
@@ -21,6 +22,7 @@ import com.yoox.net.models.outbound.SearchResultItem
 import com.yoox.net.models.outbound.SearchResults
 import com.yoox.net.models.outbound.SearchStats
 import com.yoox.net.models.outbound.Size
+import com.yoox.net.models.outbound.VisualSearch
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.MockHttpResponse
 import io.ktor.http.Headers
@@ -31,6 +33,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.io.InputStream
 import com.yoox.net.models.inbound.Attribute as InboundAttribute
 import com.yoox.net.models.inbound.AttributeUrl as InboundAttributeUrl
 import com.yoox.net.models.inbound.CategoryAttribute as InboundCategoryAttribute
@@ -356,6 +359,18 @@ class ItemsTest {
                 .search("men")
                 .execute()
             assertEquals(expected, actual)
+        }
+    }
+
+    @Test
+    fun shouldUploadMultiPart() {
+        runBlocking {
+            val stream: InputStream = javaClass.getResourceAsStream("/cargo-pants.jpg")
+
+            val visualSearch: VisualSearch = ItemsBuilder("IT").build()
+                .visualSearchByMultiPart(Gender.Men, stream)
+                .execute()
+            assertEquals(10, visualSearch.items.size)
         }
     }
 }

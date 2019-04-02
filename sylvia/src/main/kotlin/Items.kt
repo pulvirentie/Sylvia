@@ -32,7 +32,7 @@ private const val AUTHORITY: String = "secure.api.yoox.biz"
 private const val API_BASE_URL: String = "https://$AUTHORITY/YooxCore.API/1.0/"
 private const val DIVISION_CODE: String = "YOOX"
 private const val VISUAL_SEARCH_BASE_URL =
-    "http://ynappi-dev.azurewebsites.net:80/api/search_by_image/IT"
+    "http://ynappi-dev.azurewebsites.net/api/search_by_image/IT"
 
 class ItemsBuilder(private val country: String) {
     fun build(): Items =

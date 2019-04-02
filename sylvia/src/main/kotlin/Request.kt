@@ -1,6 +1,7 @@
 package com.yoox.net
 
 import io.ktor.client.HttpClient
+import io.ktor.client.features.BadResponseStatusException
 import io.ktor.client.request.forms.formData
 import io.ktor.client.request.forms.submitFormWithBinaryData
 import io.ktor.client.request.get
@@ -8,7 +9,9 @@ import io.ktor.client.request.post
 import io.ktor.client.request.url
 import io.ktor.http.URLBuilder
 import io.ktor.http.content.PartData
+import io.ktor.util.cio.toByteArray
 import kotlinx.io.InputStream
+import kotlinx.io.core.String
 import kotlinx.io.streams.asInput
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
@@ -71,14 +74,19 @@ internal sealed class KtorRequest<T>(
                 append("image", form.asInput())
                 append("gender", gender)
             }
-            val result: String = client.submitFormWithBinaryData(
-                formData = data,
-                block = {
-                    url(uri.buildString())
-                    headers.append("Accept", "application/json")
-                }
-            )
-            return parseJson(result)
+
+            try {
+                val result: String = client.submitFormWithBinaryData(
+                    formData = data,
+                    block = {
+                        url(uri.buildString())
+                        headers.append("Accept", "application/json")
+                    }
+                )
+            } catch (e: BadResponseStatusException) {
+                println(String(e.response.content.toByteArray()))
+            }
+            return parseJson("")
         }
     }
 
