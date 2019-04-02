@@ -1,6 +1,5 @@
 package com.yoox.samplekotlinapp.detail
 
-
 import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.View
@@ -19,7 +18,6 @@ class ColorAdapter internal constructor(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val context = parent.context
         val inflater = LayoutInflater.from(context)
-
         val contactView = inflater.inflate(R.layout.item_color, parent, false)
 
         return ViewHolder(contactView)
@@ -43,5 +41,4 @@ class ColorAdapter internal constructor(
             itemView.setOnClickListener { onItemSelectedListener(item) }
         }
     }
-
 }
