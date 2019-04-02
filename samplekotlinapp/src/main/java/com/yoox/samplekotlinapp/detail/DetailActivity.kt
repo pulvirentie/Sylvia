@@ -1,5 +1,6 @@
 package com.yoox.samplekotlinapp.detail
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -17,17 +18,13 @@ import com.yoox.net.models.outbound.Item
 import com.yoox.net.models.outbound.Size
 import com.yoox.samplekotlinapp.R
 import com.yoox.samplekotlinapp.common.ImageAdapter
-import com.yoox.samplekotlinapp.visual.VisualActivity
-import com.yoox.samplekotlinapp.visual.VisualActivity.Companion.REMOTE_IMAGE_URI
 import kotlinx.android.synthetic.main.activity_detail.*
 
 class DetailActivity : AppCompatActivity() {
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
-
 
         val detailViewModel = ViewModelProviders.of(this).get(DetailViewModel::class.java)
         detailViewModel.item.observe(this, Observer {
@@ -38,7 +35,7 @@ class DetailActivity : AppCompatActivity() {
             Toast.makeText(this, it, Toast.LENGTH_LONG).show()
         })
 
-        val id = intent.getStringExtra(ID)
+        val id = intent.getStringExtra(KEY_ITEM_ID)
         detailViewModel.loadItem(id)
     }
 
@@ -48,7 +45,6 @@ class DetailActivity : AppCompatActivity() {
             addTransition(Fade())
         }
         TransitionManager.beginDelayedTransition(root, transition)
-
 
         val hasValidColor = !item.colors.isEmpty()
 
@@ -75,11 +71,6 @@ class DetailActivity : AppCompatActivity() {
 
         val sizeAdapter = SizeAdapter(sizes, this::onSizeSelected)
         size_recyclerView.adapter = sizeAdapter
-
-        visual_search.visibility = View.VISIBLE
-        visual_search.setOnClickListener { onVisualSearch(item.previewImage) }
-
-
     }
 
     private fun List<Image>.getThumbnails(): List<String> = map {
@@ -94,13 +85,13 @@ class DetailActivity : AppCompatActivity() {
         Toast.makeText(this, item.toString(), Toast.LENGTH_SHORT).show()
     }
 
-    private fun onVisualSearch(previewImage: String) {
-        val intent = Intent(this, VisualActivity::class.java)
-        intent.putExtra(REMOTE_IMAGE_URI, previewImage)
-        startActivity(intent)
-    }
-
     companion object {
-        const val ID = "ID"
+        private const val KEY_ITEM_ID = "ITEM_ID"
+
+        fun start(context: Context, itemID: String) {
+            val starter = Intent(context, DetailActivity::class.java)
+            starter.putExtra(KEY_ITEM_ID, itemID)
+            context.startActivity(starter)
+        }
     }
 }

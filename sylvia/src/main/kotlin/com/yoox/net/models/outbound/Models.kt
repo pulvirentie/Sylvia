@@ -1,10 +1,5 @@
 package com.yoox.net.models.outbound
 
-enum class Gender {
-    Men,
-    Women,
-}
-
 enum class DepartmentType(internal val value: String) {
     Men("men"),
     Women("women"),
@@ -38,7 +33,7 @@ data class Department(
 )
 
 data class Brand(
-    val id: Int?,
+    val id: Int,
     val name: String
 )
 
@@ -140,10 +135,6 @@ data class Filter(
     val label: String,
     internal val value: String,
     internal val field: String
-)
-
-data class VisualSearch(
-    val items: List<SearchResultItem>
 )
 
 data class Prices(

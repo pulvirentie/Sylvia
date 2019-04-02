@@ -1,5 +1,6 @@
 package com.yoox.samplejavaapp.detail;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -20,17 +21,20 @@ import com.yoox.net.models.outbound.Item;
 import com.yoox.net.models.outbound.Size;
 import com.yoox.samplejavaapp.R;
 import com.yoox.samplejavaapp.common.ImageAdapter;
-import com.yoox.samplejavaapp.visual.VisualActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.yoox.samplejavaapp.visual.VisualActivity.REMOTE_IMAGE_URI;
-
 public class DetailActivity extends AppCompatActivity implements ColorAdapter.OnColorSelectedListener, SizeAdapter.OnSizeSelectedListener {
 
-    public static final String ID = "ID";
+    private static final String KEY_ITEM_ID = "ITEM_ID";
+
+    public static void start(Context context, String itemID) {
+        Intent starter = new Intent(context, DetailActivity.class);
+        starter.putExtra(KEY_ITEM_ID, itemID);
+        context.startActivity(starter);
+    }
 
     private ViewGroup root;
     private ViewPager viewPager;
@@ -40,7 +44,6 @@ public class DetailActivity extends AppCompatActivity implements ColorAdapter.On
     private TextView composition;
     private RecyclerView colorRecyclerView;
     private RecyclerView sizeRecyclerView;
-    private View visualSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +58,6 @@ public class DetailActivity extends AppCompatActivity implements ColorAdapter.On
         composition = findViewById(R.id.composition);
         colorRecyclerView = findViewById(R.id.color_recyclerView);
         sizeRecyclerView = findViewById(R.id.size_recyclerView);
-        visualSearch = findViewById(R.id.visual_search);
 
         DetailViewModel detailViewModel = ViewModelProviders.of(this).get(DetailViewModel.class);
         detailViewModel.getItem()
@@ -65,7 +67,7 @@ public class DetailActivity extends AppCompatActivity implements ColorAdapter.On
                 Toast.makeText(this, error, Toast.LENGTH_LONG).show());
 
 
-        String id = getIntent().getStringExtra(ID);
+        String id = getIntent().getStringExtra(KEY_ITEM_ID);
         detailViewModel.loadItem(id);
     }
 
@@ -102,11 +104,6 @@ public class DetailActivity extends AppCompatActivity implements ColorAdapter.On
 
         SizeAdapter sizeAdapter = new SizeAdapter(sizes, this);
         sizeRecyclerView.setAdapter(sizeAdapter);
-
-        visualSearch.setVisibility(View.VISIBLE);
-        visualSearch.setOnClickListener(v -> onVisualSearch(item.getPreviewImage()));
-
-
     }
 
     private List<String> getImagesUrl(List<Image> images) {
@@ -125,11 +122,5 @@ public class DetailActivity extends AppCompatActivity implements ColorAdapter.On
     @Override
     public void onSizeSelected(Size item) {
         Toast.makeText(this, item.toString(), Toast.LENGTH_SHORT).show();
-    }
-
-    private void onVisualSearch(String previewImage) {
-        Intent intent = new Intent(this, VisualActivity.class);
-        intent.putExtra(REMOTE_IMAGE_URI, previewImage);
-        startActivity(intent);
     }
 }

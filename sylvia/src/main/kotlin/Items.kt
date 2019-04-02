@@ -2,15 +2,11 @@ package com.yoox.net
 
 import com.yoox.net.mapping.toOutboundItem
 import com.yoox.net.mapping.toOutboundSearchResults
-import com.yoox.net.mapping.toOutboundVisualSearch
-import com.yoox.net.models.inbound.VisualSearchRequest
+import com.yoox.net.models.outbound.DepartmentType
 import com.yoox.net.models.outbound.Filter
-import com.yoox.net.models.outbound.Gender
 import com.yoox.net.models.outbound.Item
 import com.yoox.net.models.outbound.PriceFilter
 import com.yoox.net.models.outbound.SearchResults
-import com.yoox.net.models.outbound.VisualSearch
-import com.yoox.net.models.outbound.DepartmentType
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.okhttp.OkHttpConfig
@@ -26,7 +22,6 @@ import kotlinx.serialization.list
 import kotlinx.serialization.map
 import com.yoox.net.models.inbound.Item as InboundItem
 import com.yoox.net.models.inbound.SearchResults as InboundSearchResults
-import com.yoox.net.models.inbound.VisualSearch as InboundVisualSearch
 
 private const val AUTHORITY: String = "secure.api.yoox.biz"
 private const val API_BASE_URL: String = "https://$AUTHORITY/YooxCore.API/1.0/"
@@ -67,23 +62,6 @@ class Items(
             client,
             URLBuilder("$API_BASE_URL${DIVISION_CODE}_${country.toUpperCase()}/SearchResults?dept=${department.value}")
         )
-
-    fun visualSearchByUrl(gender: Gender, url: String): Request<VisualSearch> =
-        visualSearch(gender, url)
-
-    fun visualSearchByBase64(gender: Gender, base64: String): Request<VisualSearch> =
-        visualSearch(gender, base64)
-
-    private fun visualSearch(gender: Gender, image: String): Request<VisualSearch> =
-        KtorRequest.Post(
-            client,
-            URLBuilder(VISUAL_SEARCH_BASE_URL),
-            InboundVisualSearch.serializer(),
-            VisualSearchRequest(
-                gender.toVisualSearchGender(),
-                image
-            )
-        ).map(InboundVisualSearch::toOutboundVisualSearch)
 }
 
 interface FilterableRequest : Request<SearchResults> {
@@ -183,9 +161,3 @@ internal class DepartmentSearchRequest internal constructor(
         }
     }
 }
-
-private fun Gender.toVisualSearchGender(): String =
-    when (this) {
-        Gender.Men -> "man"
-        Gender.Women -> "women"
-    }
