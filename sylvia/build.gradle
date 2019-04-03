@@ -1,10 +1,10 @@
 plugins {
     id 'java'
     id 'org.jetbrains.kotlin.jvm'
+    id 'maven'
 }
 
-group 'com.yoox'
-version '1.0-SNAPSHOT'
+group 'com.github.YTech'
 
 sourceCompatibility = 1.8
 
