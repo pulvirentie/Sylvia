@@ -73,10 +73,10 @@ suspend fun filterSearchResults() {
     // just grab the first filter of kind "designer"
     val designerFilter = items.refinements.designers().first()
     // send a new search request (and apply the above filter as well)
-    sylvia.search(DepartmentType.Men)
+    val filteredItems = sylvia.search(DepartmentType.Men)
         .filterBy(designerFilter)
         .execute()
-    println("you've found ${items.stats.itemCount} items")
+    println("you've found ${filteredItems.stats.itemCount} items")
 }
 ```
 
