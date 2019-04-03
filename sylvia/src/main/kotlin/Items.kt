@@ -20,6 +20,7 @@ import kotlinx.serialization.internal.StringSerializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.list
 import kotlinx.serialization.map
+import okhttp3.logging.HttpLoggingInterceptor
 import com.yoox.net.models.inbound.Item as InboundItem
 import com.yoox.net.models.inbound.SearchResults as InboundSearchResults
 
@@ -31,7 +32,11 @@ private const val VISUAL_SEARCH_BASE_URL =
 
 class ItemsBuilder(private val country: String) {
     fun build(): Items =
-        Items(OkHttpEngine(OkHttpConfig()), country)
+        Items(OkHttpEngine(OkHttpConfig().apply {
+            addInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            })
+        }), country)
 
     internal fun build(engine: HttpClientEngine): Items =
         Items(engine, country)
