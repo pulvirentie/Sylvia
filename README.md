@@ -90,7 +90,24 @@ Start coding! Have a look to the [Java sample app](https://github.com/YTech/Sylv
 
 ## Getting Started
 
-TODO: install (maven, gradle, whatever)
+### Dependency
+
+Add this in your root `build.gradle` file (**not** your module `build.gradle` file):
+
+```gradle
+allprojects {
+    repositories {
+        maven { url "https://jitpack.io" }
+    }
+}
+```
+
+Then, add the library to your module `build.gradle`
+```gradle
+dependencies {
+    implementation 'com.github.YTech:Sylvia:0.0.1'
+}
+```
 
 ## Build
 
