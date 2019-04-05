@@ -98,6 +98,7 @@ Add this in your root `build.gradle` file (**not** your module `build.gradle` fi
 allprojects {
     repositories {
         maven { url "https://jitpack.io" }
+        maven { url "https://kotlin.bintray.com/kotlinx" }
     }
 }
 ```
@@ -105,7 +106,9 @@ allprojects {
 Then, add the library to your module `build.gradle`
 ```gradle
 dependencies {
-    implementation 'com.github.YTech:Sylvia:0.0.1'
+    implementation 'com.github.YTech.Sylvia:sylvia:0.0.1'
+    implementation 'com.github.YTech.Sylvia:rx:0.0.1'               // Optional
+    implementation 'com.github.YTech.Sylvia:androidcallback:0.0.1'  // Optional
 }
 ```
 
