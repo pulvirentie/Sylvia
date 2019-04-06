@@ -106,9 +106,9 @@ allprojects {
 Then, add the library to your module `build.gradle`
 ```gradle
 dependencies {
-    implementation 'com.github.YTech.Sylvia:sylvia:0.0.1'
-    implementation 'com.github.YTech.Sylvia:rx:0.0.1'               // Optional
-    implementation 'com.github.YTech.Sylvia:androidcallback:0.0.1'  // Optional
+    implementation 'com.github.YTech.Sylvia:sylvia:0.0.2'
+    implementation 'com.github.YTech.Sylvia:rx:0.0.2'               // Optional
+    implementation 'com.github.YTech.Sylvia:androidcallback:0.0.2'  // Optional
 }
 ```
 

@@ -7,6 +7,7 @@ import com.yoox.net.attributesSerializer
 import com.yoox.net.models.outbound.DepartmentType
 import com.yoox.net.models.outbound.Filter
 import com.yoox.net.models.outbound.PriceFilter
+import com.yoox.net.models.outbound.Sort
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.MockHttpResponse
 import io.ktor.http.HttpStatusCode
@@ -140,6 +141,27 @@ class SearchRequestTest {
                 .page(pageIndex)
             val byDepartmentRequest = request as DepartmentSearchRequest
             assertEquals(pageIndex.toString(), byDepartmentRequest.uri.parameters["page"])
+        }
+    }
+
+    @Test
+    fun sorted() {
+        val engine = MockEngine {
+            MockHttpResponse(
+                call,
+                HttpStatusCode.OK
+            )
+        }
+        runBlocking {
+            val filter = PriceFilter(10, 20)
+            val sorting = Sort.PriceMax
+            val request: FilterableRequest = ItemsBuilder("uk")
+                .build(engine)
+                .search(DepartmentType.Men)
+                .filterBy(filter)
+                .sortBy(sorting)
+            val byDepartmentRequest = request as DepartmentSearchRequest
+            assertEquals(sorting.value.toString(), byDepartmentRequest.uri.parameters["sortId"])
         }
     }
 

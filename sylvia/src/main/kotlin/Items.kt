@@ -7,6 +7,7 @@ import com.yoox.net.models.outbound.Filter
 import com.yoox.net.models.outbound.Item
 import com.yoox.net.models.outbound.PriceFilter
 import com.yoox.net.models.outbound.SearchResults
+import com.yoox.net.models.outbound.Sort
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.okhttp.OkHttpConfig
@@ -27,8 +28,6 @@ import com.yoox.net.models.inbound.SearchResults as InboundSearchResults
 private const val AUTHORITY: String = "secure.api.yoox.biz"
 private const val API_BASE_URL: String = "https://$AUTHORITY/YooxCore.API/1.0/"
 private const val DIVISION_CODE: String = "YOOX"
-private const val VISUAL_SEARCH_BASE_URL =
-    "https://ynappi-dev.azurewebsites.net/api/detected_items/IT"
 
 class ItemsBuilder(private val country: String) {
     fun build(): Items =
@@ -77,6 +76,8 @@ interface FilterableRequest : Request<SearchResults> {
     fun page(index: Int): FilterableRequest
 
     fun filterBy(freeText: String): FilterableRequest
+
+    fun sortBy(sort: Sort): FilterableRequest
 
     fun clone(): FilterableRequest
 }
@@ -127,6 +128,14 @@ internal class DepartmentSearchRequest internal constructor(
 
     override fun page(index: Int): FilterableRequest {
         uri.parameters["page"] = index.toString()
+        return DepartmentSearchRequest(
+            client,
+            uri
+        )
+    }
+
+    override fun sortBy(sort: Sort): FilterableRequest {
+        uri.parameters["sortId"] = sort.value.toString()
         return DepartmentSearchRequest(
             client,
             uri

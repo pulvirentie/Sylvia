@@ -12,6 +12,12 @@ enum class DepartmentType(internal val value: String) {
     BoyJunior("collboy_junior")
 }
 
+enum class Sort(internal val value: Int) {
+    NewArrivals(2),
+    PriceMin(3),
+    PriceMax(4)
+}
+
 data class Item(
     val department: Department,
     val brand: Brand,
