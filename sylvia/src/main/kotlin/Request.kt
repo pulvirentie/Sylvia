@@ -3,8 +3,11 @@ package com.yoox.net
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.header
+import io.ktor.client.request.post
 import io.ktor.client.request.url
+import io.ktor.http.ContentType
 import io.ktor.http.URLBuilder
+import io.ktor.http.contentType
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
 
@@ -30,6 +33,25 @@ internal sealed class KtorRequest<T>(
             val stringResult = client.get<String> {
                 header("YOOX-Client-Id", "hack2019")
                 url(uri.buildString())
+            }
+            return parseJson(stringResult)
+        }
+    }
+
+    internal class Post<R : Any, T>(
+        client: HttpClient,
+        uri: URLBuilder,
+        serializer: KSerializer<T>,
+        private val body: R? = null
+    ) : KtorRequest<T>(client, uri, serializer) {
+
+        override suspend fun execute(): T {
+            val stringResult = client.post<String> {
+                url(uri.buildString())
+                contentType(ContentType.Application.Json)
+                this@Post.body?.let {
+                    body = it
+                }
             }
             return parseJson(stringResult)
         }

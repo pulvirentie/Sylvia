@@ -1,5 +1,10 @@
 package com.yoox.net.models.outbound
 
+enum class Gender(internal val value: String) {
+    Men("man"),
+    Women("women")
+}
+
 enum class DepartmentType(internal val value: String) {
     Men("men"),
     Women("women"),
@@ -39,7 +44,7 @@ data class Department(
 )
 
 data class Brand(
-    val id: Int,
+    val id: Int?,
     val name: String
 )
 
@@ -158,6 +163,10 @@ data class SearchStats(
     val pageCount: Int,
     val itemCount: Int,
     val currentPageIndex: Int
+)
+
+data class VisualSearch(
+    val items: List<SearchResultItem>
 )
 
 fun Iterable<Refinement>.colors() =
